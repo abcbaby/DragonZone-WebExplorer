@@ -1,0 +1,1 @@
+keytool -genkey -alias jetty8 -keyalg RSA -keystore jetty-ssl.keystore -storepass jetty8 -keypass jetty8 -dname "CN=longcdo.ddns.net"

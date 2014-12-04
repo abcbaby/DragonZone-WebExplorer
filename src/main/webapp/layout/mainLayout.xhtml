@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>
+                    #{msg['app.name']}
+                </title>
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            </f:facet>
+        </h:head>
+
+        <h:body>
+            <p:layout fullPage="true">
+                <p:layoutUnit position="west" header="#{p:remoteUser().toUpperCase()} #{msg['caption.explorer']}" gutter="1" resizable="true" collapsible="true" minSize="200">
+                    <ui:include src="/explorer.xhtml" />
+                </p:layoutUnit>
+
+                <p:layoutUnit position="center" resizable="true">
+                    <ui:insert name="mainContent"/>
+
+                    <p:growl autoUpdate="true"/>
+                    <p:ajaxStatus onstart="PF('statusDialog').show();" 
+                                  oncomplete="PF('statusDialog').hide();"/>
+
+                    <ui:include src="/aboutDialog.xhtml" />
+                    <ui:include src="/error/viewExpired.xhtml" />
+                    <ui:include src="/statusDialog.xhtml"/>
+                </p:layoutUnit>
+
+            </p:layout>
+
+        </h:body>
+    </f:view>
+</html>

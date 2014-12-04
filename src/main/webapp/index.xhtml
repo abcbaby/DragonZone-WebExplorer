@@ -1,0 +1,340 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="/layout/mainLayout.xhtml">
+
+    <ui:define name="mainContent">
+        <script>
+            $(document).ready(function () {
+                turnOffBanner();
+                setTimeout(function () {
+                    PF('logoBar').hide();
+                }, 3000);
+            });
+            
+            function handleZipFileRequest(xhr, status, args) {
+                if (args.validZipFileSizeLimit) {
+                    document.getElementById('mainForm:tabViewId:hiddenZipFileDownloadButtonId').click();
+                }
+            }
+        </script>
+        <h:form id="logoFormId">
+            <p:remoteCommand name="turnOffBanner" 
+                             actionListener="#{mySessionBean.setDisplayedBanner(true)}" />
+            <p:notificationBar autoDisplay="#{!mySessionBean.displayedBanner}"
+                               position="top" 
+                               effect="slide" 
+                               effectSpeed="slow"
+                               style="height: 100%;"
+                               widgetVar="logoBar">
+                <p:commandLink immediate="true" 
+                               style="position: fixed !important; z-index:20 !important; overflow:visible !important; right: 20px !important;"
+                               styleClass="ui-icon fa fa-close" 
+                               global="false"
+                               title="Close Welcome Screen" 
+                               onclick="PF('logoBar').hide();"/>
+                <h:panelGrid columns="1" columnClasses="alignCenter" style="width: 100%">
+                    <h:outputLabel value="Welcome to #{msg['app.name']}!" style="font-size: xx-large"/>
+                    <p:graphicImage alt="DragonZone Logo"
+                                    title="DragonZone Logo" 
+                                    style="border: 0;"
+                                    value="/images/logo-large.png" />
+                </h:panelGrid>
+            </p:notificationBar>
+        </h:form>
+
+        <h:form id="mainForm">
+
+            <p:toolbar>
+                <f:facet name="left">
+                    <p:commandLink value="Path: #{explorerControlBean.displayFolderFullPath}"
+                                   actionListener="#{explorerBean.setSearch(false)}"
+                                   action="#{explorerControlBean.viewFolder(explorerControlBean.displayFolderFullPath)}"
+                                   update="@form:tabViewId:detailTabId:filePanelId"
+                                   style="font-weight: bold !important"/>
+                </f:facet>
+                <f:facet name="right">
+                    <h:panelGrid columns="6">
+                        <h:outputLabel value="Include Mp3 Meta"/>
+                        <p:selectBooleanCheckbox id="searchMp3MetaId"
+                                                 value="#{explorerBean.searchMp3Meta}"
+                                                 label="#{msg['caption.mp3.search.meta']}">
+                            <p:ajax process="@this" global="false"/>
+                        </p:selectBooleanCheckbox>
+                        
+                        <p:spacer width="3"/>
+                                                 
+                        <p:inputText id="searchInputId" 
+                                     value="#{explorerBean.searchFile}" 
+                                     title="#{msg['caption.search']} files, folders, or MP3 Meta Info, use whitespace to find all words"
+                                     size="25"
+                                     label="#{msg['caption.search']}">
+                            <p:ajax process="@this" 
+                                    listener="#{explorerControlBean.searchFiles()}"
+                                    update="@form:tabViewId:fileSizeId @form:tabViewId:filePanelId"/>
+                        </p:inputText>
+                        <p:watermark for="searchInputId" 
+                                     value="#{msg['caption.search']}" />
+                        <p:commandLink process="@this searchInputId"
+                                       actionListener="#{explorerControlBean.searchFiles()}"
+                                       update="@form:tabViewId:fileSizeId @form:tabViewId:filePanelId"
+                                       title="#{msg['caption.search']}"
+                                       styleClass="ui-icon fa fa-search"/>
+                    </h:panelGrid>
+                </f:facet>
+            </p:toolbar>
+            <p:tabView id="tabViewId" cache="true">
+                <p:tab id="detailTabId">
+                    <f:facet name="title">
+                        <h:panelGrid columns="2">
+                            <h:outputText title="#{msg['caption.detail']}"
+                                          styleClass="ui-icon fa fa-file" />
+                            <h:outputText value="#{msg['caption.detail']}"/>
+                        </h:panelGrid>
+                    </f:facet>
+
+                    <p:toolbar id="actionsMenuId">
+                        <f:facet name="left">
+                            <h:panelGrid columns="4">
+                                <p:fileUpload fileUploadListener="#{explorerControlBean.handleFileUpload}"
+                                              update="@form"
+                                              auto="true"
+                                              multiple="false"
+                                              mode="advanced"
+                                              required="true"
+                                              label="Upload"
+                                              rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}"/>
+                                <p:commandButton value="#{msg['caption.file.zip']} File(s)" 
+                                                 actionListener="#{explorerControlBean.checkZipFileTotalSize()}" 
+                                                 oncomplete="handleZipFileRequest(xhr, status, args)"
+                                                 disabled="#{explorerBean.search or explorerBean.selectedFiles == null or fn:length(explorerBean.selectedFiles) == 0}"
+                                                 icon="fa fa-file-archive-o"/>
+                                <p:commandButton value="#{msg['caption.file.terminal']}"
+                                                 onclick="PF('terminalDialog').show();"
+                                                 icon="fa fa-terminal"
+                                                 rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}"/>                                
+                                <p:commandButton id="hiddenZipFileDownloadButtonId"
+                                                 value="#{msg['caption.file.zip']} File(s)" 
+                                                 actionListener="#{explorerControlBean.zipFiles()}" 
+                                                 style="opacity:0;filter:alpha(opacity=0);font-size:1px;"
+                                                 ajax="false"/>
+                            </h:panelGrid>
+                        </f:facet>
+                        <f:facet name="right">
+                            <h:outputText id="fileSizeId" value="#{msg['caption.total']}: #{explorerBean.fileList.size()}"/>
+                        </f:facet>
+                    </p:toolbar>
+
+                    <h:panelGroup id="filePanelId">
+                        <p:dataTable value="#{explorerBean.fileList}" 
+                                     var="file"
+                                     rowKey="#{file}"
+                                     disabledSelection="#{explorerBean.search}"
+                                     selection="#{explorerBean.selectedFiles}"
+                                     widgetVar="mainDataTable"
+                                     tableStyle="width:auto !important;">
+                            <p:ajax event="toggleSelect" 
+                                    update="@form:tabViewId:detailTabId:actionsMenuId" />
+                            <p:ajax event="rowSelectCheckbox" 
+                                    update="@form:tabViewId:detailTabId:actionsMenuId" />
+                            <p:ajax event="rowUnselectCheckbox" 
+                                    update="@form:tabViewId:detailTabId:actionsMenuId" />
+                            <p:ajax event="rowSelect" 
+                                    update="@form:tabViewId:detailTabId:actionsMenuId" />
+                            <p:ajax event="rowUnselect" 
+                                    update="@form:tabViewId:detailTabId:actionsMenuId" />
+
+                            <p:column rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}">
+                                <p:commandButton actionListener="#{explorerControlBean.loadRename(file)}" 
+                                                 oncomplete="PF('confirmRenameDialog').show();"
+                                                 update=":renameFileFormId"
+                                                 title="#{msg['caption.file.rename']} #{file.name}?"
+                                                 disabled="#{file.directory}"
+                                                 icon="fa fa-edit" />
+                                <p:spacer width="3"/>
+                                <p:commandButton actionListener="#{explorerBean.setSelectedFile(file)}" 
+                                                 oncomplete="PF('confirmDeleteDialog').show();"
+                                                 update=":deleteFileFormId"
+                                                 title="#{msg['caption.file.delete']} #{file.name}?"
+                                                 disabled="#{file.directory}"
+                                                 icon="fa fa-trash" />
+                            </p:column>
+                            <p:column> 
+                                <p:commandButton actionListener="#{explorerBean.setSelectedFile(file)}" 
+                                                 action="#{explorerControlBean.loadViewDataPage()}"
+                                                 title="#{msg['caption.file.view']} #{file.name}?"
+                                                 disabled="#{!(mediaFileUtil.isImage(file) or mediaFileUtil.isMedia(file))}"
+                                                 icon="fa fa-flash" 
+                                                 onclick="form.target = '_blank'"
+                                                 ajax="false" />
+                            </p:column>
+                            <p:column headerText="#{msg['caption.folder']}" 
+                                      sortBy="#{file.parentFile.absolutePath}"
+                                      rendered="#{explorerBean.search}"> 
+                                <p:commandLink value="#{file.parentFile.absolutePath}"
+                                               actionListener="#{explorerControlBean.viewFolder(file.parentFile.absolutePath)}"
+                                               update="@form :explorerForm"
+                                               title="View #{file.parentFile.absolutePath}?" />
+                            </p:column>
+                            <p:column headerText="#{msg['caption.file.name']}" sortBy="#{file.name}"> 
+                                <p:commandLink actionListener="#{explorerBean.setSelectedFile(file)}"
+                                               action="#{explorerControlBean.downloadFile()}"
+                                               value="#{file.name}"
+                                               title="Download #{file.name}?"
+                                               disabled="#{file.directory}"
+                                               ajax="false"/>
+                            </p:column>
+                            <p:column headerText="#{msg['caption.file.size']}" sortBy="#{file.length()}">
+                                <h:outputText value="#{explorerControlBean.getReadableFileSize(file)}" />
+                            </p:column>
+                            <p:column headerText="#{msg['caption.file.lastModified']}" sortBy="#{explorerBean.getDate(file.lastModified())}">
+                                <h:outputText value="#{explorerBean.getDate(file.lastModified())}">
+                                    <f:convertDateTime pattern="#{applicationConstants.getVariableValue('FORMAT_TIMESTAMP')}"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column selectionMode="multiple" style="width:16px; text-align:center"/>
+                        </p:dataTable>
+
+                    </h:panelGroup>
+
+                </p:tab>
+                <!--                <p:tab>
+                                    <f:facet name="title">
+                                        <h:panelGrid columns="2" styleClass="noBorder">
+                                            <h:outputText title="#{msg['caption.preview']}"
+                                                          styleClass="ui-icon fa fa-camera" />
+                                            <h:outputText value="#{msg['caption.preview']}"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+                                    <p:accordionPanel id="accordionPanelId" cache="true" multiple="true" activeIndex="-1">
+                                        <p:tab title="#{msg['caption.image']} - (#{msg['caption.total']}: #{explorerBean.imageFiles.size()})">
+                                            <h:outputText value="No Images"
+                                                          rendered="#{explorerBean.imageFiles.size() eq 0}"/>
+                                            <p:galleria value="#{explorerBean.imageFiles}" 
+                                                        var="file" 
+                                                        panelWidth="600" 
+                                                        panelHeight="450" 
+                                                        autoPlay="false"
+                                                        showCaption="true"
+                                                        rendered="#{explorerBean.imageFiles.size() gt 0}">
+                                                <p:graphicImage value="#{contentStreamer.streamedContentPreview}"
+                                                                title="#{applicationConstants.abbreviateFileName(file.name)}"
+                                                                alt="#{explorerControlBean.getDisplayFileInfo(file)}"
+                                                                width="600" height="450"
+                                                                styleClass="content">
+                                                    <f:param name="fileId" value="#{explorerControlBean.encrypt(file.absolutePath, 'FILEID_KEY')}" />
+                                                </p:graphicImage>
+                                            </p:galleria>
+                                        </p:tab>
+                                        <p:tab title="#{msg['caption.multimedia']} - (#{msg['caption.total']}: #{explorerBean.mediaFiles.size()})">
+                                            <p:dataGrid value="#{explorerBean.mediaFiles}" 
+                                                        var="file"
+                                                        columns="2" 
+                                                        paginatorAlwaysVisible="false"
+                                                        layout="grid"
+                                                        rows="12" 
+                                                        paginator="true" 
+                                                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                        rowsPerPageTemplate="10, 20, 50, 100">
+                                                <p:panel header="#{applicationConstants.abbreviateFileName(file.name)}"
+                                                         footer="#{msg['caption.player.windows']}"
+                                                         style="text-align:center"
+                                                         rendered="#{mediaFileUtil.isMediaPlayer('windows', file)}">
+                                                    <h:panelGrid columns="1" style="width:100%">
+                                                        <p:media value="#{contentStreamer.streamedContentPreview}" player="windows" width="400" height="200">
+                                                            <f:param name="fileId" value="#{explorerControlBean.encrypt(file.absolutePath, 'FILEID_KEY')}" />
+                                                            <f:param name="AUTOPLAY" value="false" />
+                                                            <f:param name="autostart" value="false" />
+                                                        </p:media>
+                                                    </h:panelGrid>
+                                                </p:panel>
+                                                <p:panel header="#{applicationConstants.abbreviateFileName(file.name)}"
+                                                         footer="#{msg['caption.player.quicktime']}"
+                                                         style="text-align:center"
+                                                         rendered="#{mediaFileUtil.isMediaPlayer('quicktime', file)}">
+                                                    <h:panelGrid columns="1" style="width:100%">
+                                                        <h:outputText value="#{explorerControlBean.getMp3Meta(file).getTitle()} - TEMPORARY DISABLED SINCE IT AUTOPLAY"
+                                                                      rendered="#{mediaFileUtil.isMp3(file)}"/>
+                                                        <p:media value="#{contentStreamer.streamedContentPreview}" player="quicktime" width="400" height="200"
+                                                                 rendered="#{!mediaFileUtil.isMp3(file)}">
+                                                            <f:param name="fileId" value="#{explorerControlBean.encrypt(file.absolutePath, 'FILEID_KEY')}" />
+                                                            <f:param name="AUTOPLAY" value="false" />
+                                                            <f:param name="CONTROLLER" value="true" />
+                                                            <f:param name="autostart" value="false" />
+                                                        </p:media>
+                                                    </h:panelGrid>
+                                                </p:panel>
+                                                <p:panel header="#{applicationConstants.abbreviateFileName(file.name)}"
+                                                         footer="#{msg['caption.player.flash']}"
+                                                         style="text-align:center"
+                                                         rendered="#{mediaFileUtil.isMediaPlayer('flash', file)}">
+                                                    <h:panelGrid columns="1" style="width:100%">
+                                                        <p:media value="#{contentStreamer.streamedContentPreview}" player="flash" width="400" height="200">
+                                                            <f:param name="fileId" value="#{explorerControlBean.encrypt(file.absolutePath, 'FILEID_KEY')}" />
+                                                        </p:media>
+                                                    </h:panelGrid>
+                                                </p:panel>
+                                                <p:panel header="#{applicationConstants.abbreviateFileName(file.name)}"
+                                                         footer="#{msg['caption.player.real']}"
+                                                         style="text-align:center"
+                                                         rendered="#{mediaFileUtil.isMediaPlayer('real', file)}">
+                                                    <h:panelGrid columns="1" style="width:100%">
+                                                        <p:media value="#{contentStreamer.streamedContentPreview}" player="real" width="400" height="200">
+                                                            <f:param name="fileId" value="#{explorerControlBean.encrypt(file.absolutePath, 'FILEID_KEY')}" />
+                                                            <f:param name="AUTOPLAY" value="false" />
+                                                            <f:param name="autostart" value="false" />
+                                                        </p:media>
+                                                    </h:panelGrid>
+                                                </p:panel>
+                                                <p:panel header="#{applicationConstants.abbreviateFileName(file.name)}"
+                                                         footer="#{msg['caption.player.pdf']}"
+                                                         style="text-align:center"
+                                                         rendered="#{mediaFileUtil.isMediaPlayer('pdf', file)}">
+                                                    <h:panelGrid columns="1" style="width:100%">
+                                                        <p:media value="#{contentStreamer.streamedContentPreview}" player="pdf" width="400" height="200">
+                                                            <f:param name="fileId" value="#{explorerControlBean.encrypt(file.absolutePath, 'FILEID_KEY')}" />
+                                                            <f:param name="AUTOPLAY" value="false" />
+                                                            <f:param name="autostart" value="false" />
+                                                        </p:media>
+                                                    </h:panelGrid>
+                                                </p:panel>
+                                            </p:dataGrid>
+                                        </p:tab>
+                                        <p:tab title="#{msg['caption.unknown']} - (#{msg['caption.total']}: #{explorerBean.unknownFiles.size()})">
+                                            <p:dataGrid value="#{explorerBean.unknownFiles}" 
+                                                        var="file"
+                                                        columns="2" 
+                                                        paginatorAlwaysVisible="false"
+                                                        layout="grid"
+                                                        rows="12" 
+                                                        paginator="true" 
+                                                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                        rowsPerPageTemplate="10, 20, 50, 100">
+                                                <p:panel header="#{applicationConstants.abbreviateFileName(file.name)}"
+                                                         style="text-align:center">
+                                                    <h:panelGrid columns="1" style="width:100%">
+                                                        <p:graphicImage value="#{contentStreamer.streamedContentPreview}" 
+                                                                        width="400" height="200"
+                                                                        styleClass="content">
+                                                            <f:param name="fileId" value="#{file.absolutePath}" />
+                                                        </p:graphicImage>
+                                                    </h:panelGrid>
+                                                </p:panel>
+                
+                                            </p:dataGrid>
+                                        </p:tab>
+                                    </p:accordionPanel>
+                                </p:tab>-->
+            </p:tabView>
+
+        </h:form>
+
+        <ui:include src="/confirmDialogs.xhtml"/>
+
+    </ui:define>
+</ui:composition>

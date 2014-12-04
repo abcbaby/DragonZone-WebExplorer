@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:panelGroup style="position: fixed !important; z-index:20 !important; overflow:visible !important; right: 20px !important; bottom: 5px !important;">
+        <p:commandLink immediate="true" 
+                       onclick="PF('aboutDialog').show();"
+                       global="false"
+                       title="About">
+            <p:graphicImage alt="About"
+                            title="About" 
+                            style="border: 0;"
+                            value="/images/logo.png" />                                           
+        </p:commandLink>
+    </h:panelGroup>
+
+    <p:dialog  id="aboutDialogId"
+               modal="true"
+               appendTo="@(body)"
+               header="About"
+               resizable="false"
+               closable="true"
+               closeOnEscape="true"
+               widgetVar="aboutDialog">
+        <h:form id="aboutFormId">
+            <p:panel>
+                <h:panelGrid columns="1" columnClasses="alignCenter" style="width:100%">
+                    <h:panelGroup>
+                        <p:graphicImage value="/images/logo-large.png" width="48" height="48"/><br/><br/>
+                        <h:outputLabel value="Developed and supported by #{msg['dev.team']}."/><br/>
+                        <h:outputLabel value="Contact Info: #{msg['contact.email']}"/><br/>
+                        <h:outputLabel value="App Name: #{msg['app.name']}"/><br/>
+                        <h:outputLabel value="Version: #{msg['app.version']}"/>
+                    </h:panelGroup>
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

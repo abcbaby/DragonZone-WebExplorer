@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:fragment>
+        <p:dialog id="terminalDialogId" 
+                  appendTo="@(body)"
+                  modal="false"                  
+                  dynamic="false"
+                  header="Server Terminal" 
+                  fitViewport="true"
+                  closeOnEscape="true"
+                  closable="true"
+                  draggable="true"
+                  resizable="true"
+                  widgetVar="terminalDialog">  
+            <ui:include src="/terminal/terminal.xhtml"/>
+        </p:dialog>
+
+        <p:dialog id="confirmRenameDialogId" 
+                  appendTo="@(body)"
+                  modal="true"                  
+                  dynamic="true"
+                  header="Rename File" 
+                  closeOnEscape="true"
+                  closable="true"
+                  draggable="false"
+                  resizable="false"
+                  widgetVar="confirmRenameDialog">  
+            <h:form id="renameFileFormId">  
+                <p:inputText value="#{explorerBean.newFilename}"
+                             size="75"
+                             label="Rename File"/>
+
+                <p:spacer height="5px"/>                                     
+                <p:separator/>
+                <p:spacer height="5px"/>
+
+                <p:commandButton value="OK" 
+                                 actionListener="#{explorerControlBean.renameFile()}"
+                                 onclick="PF('confirmRenameDialog').hide();" 
+                                 update=":mainForm"/>
+                <p:spacer width="5px"/>
+                <p:commandButton value="Cancel" 
+                                 oncomplete="PF('confirmRenameDialog').hide();" />   
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="confirmDeleteDialogId" 
+                  appendTo="@(body)"
+                  modal="true"                  
+                  dynamic="true"
+                  header="Delete File" 
+                  closeOnEscape="true"
+                  closable="true"
+                  draggable="false"
+                  resizable="false"
+                  widgetVar="confirmDeleteDialog">  
+            <h:form id="deleteFileFormId">  
+                <h:outputLabel value="Are you sure you want to delete '#{explorerBean.selectedFile.name}'?" /> 
+
+                <p:spacer height="5px"/>                                     
+                <p:separator/>
+                <p:spacer height="5px"/>
+
+                <p:commandButton value="OK" 
+                                 actionListener="#{explorerControlBean.deleteSelectedFile()}"
+                                 onclick="PF('confirmDeleteDialog').hide();" 
+                                 update=":mainForm"/>
+                <p:spacer width="5px"/>
+                <p:commandButton value="Cancel" 
+                                 oncomplete="PF('confirmDeleteDialog').hide();" />   
+
+            </h:form>
+        </p:dialog>
+
+    </ui:fragment>
+</ui:composition>

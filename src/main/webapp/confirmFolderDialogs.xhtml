@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:fragment>
+        <p:dialog id="confirmCreateFolderDialogId" 
+                  appendTo="@(body)"
+                  modal="true"                  
+                  dynamic="true"
+                  header="Create Folder" 
+                  closeOnEscape="true"
+                  closable="true"
+                  draggable="false"
+                  resizable="false"
+                  widgetVar="confirmCreateFolderDialog">  
+            <h:form id="createFolderFormId">  
+                <p:inputText value="#{explorerBean.newFilename}"
+                             size="75"
+                             label="Create Folder"/>
+
+                <p:spacer height="5px"/>                                     
+                <p:separator/>
+                <p:spacer height="5px"/>
+
+                <p:commandButton value="OK" 
+                                 actionListener="#{explorerControlBean.createFolder()}"
+                                 onclick="PF('confirmCreateFolderDialog').hide();" 
+                                 update=":explorerForm"/>
+                <p:spacer width="5px"/>
+                <p:commandButton value="Cancel" 
+                                 oncomplete="PF('confirmCreateFolderDialog').hide();" />   
+
+            </h:form>
+        </p:dialog>
+        <p:dialog id="confirmRenameFolderDialogId" 
+                  appendTo="@(body)"
+                  modal="true"                  
+                  dynamic="true"
+                  header="Rename Folder" 
+                  closeOnEscape="true"
+                  closable="true"
+                  draggable="false"
+                  resizable="false"
+                  widgetVar="confirmRenameFolderDialog">  
+            <h:form id="renameFolderFormId">  
+                <p:inputText value="#{explorerBean.newFilename}"
+                             size="75"
+                             label="Rename Folder"/>
+
+                <p:spacer height="5px"/>                                     
+                <p:separator/>
+                <p:spacer height="5px"/>
+
+                <p:commandButton value="OK" 
+                                 actionListener="#{explorerControlBean.renameFolder()}"
+                                 onclick="PF('confirmRenameFolderDialog').hide();" 
+                                 update=":explorerForm"/>
+                <p:spacer width="5px"/>
+                <p:commandButton value="Cancel" 
+                                 oncomplete="PF('confirmRenameFolderDialog').hide();" />   
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="confirmDeleteFolderDialogId" 
+                  appendTo="@(body)"
+                  modal="true"                  
+                  dynamic="true"
+                  header="Delete File" 
+                  closeOnEscape="true"
+                  closable="true"
+                  draggable="false"
+                  resizable="false"
+                  widgetVar="confirmDeleteFolderDialog">  
+            <h:form id="deleteFolderFormId">  
+                <h:outputLabel value="Are you sure you want to delete '#{explorerBean.selectedFile.name}'?" /> 
+
+                <p:spacer height="5px"/>                                     
+                <p:separator/>
+                <p:spacer height="5px"/>
+
+                <p:commandButton value="OK" 
+                                 actionListener="#{explorerControlBean.deleteFolder()}"
+                                 onclick="PF('confirmDeleteFolderDialog').hide();" 
+                                 update=":explorerForm"/>
+                <p:spacer width="5px"/>
+                <p:commandButton value="Cancel" 
+                                 oncomplete="PF('confirmDeleteFolderDialog').hide();" />   
+
+            </h:form>
+        </p:dialog>
+
+    </ui:fragment>
+</ui:composition>

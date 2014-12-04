@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>
+                    #{msg['app.name']} - View Data
+                </title>
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            </f:facet>
+        </h:head>
+
+        <h:body>
+            <f:event type="preRenderComponent" listener="#{viewDataControlBean.preLoadPage}" />
+
+            <p:growl autoUpdate="true"/>
+
+            <h:form id="viewDataFormId">
+
+                <h:panelGroup id="pollPanelId">
+                    <p:poll interval="#{viewDataControlBean.remainingPollInterval}" 
+                            listener="#{viewDataControlBean.pickNext()}" 
+                            update="@form" 
+                            rendered="#{viewDataBean.polling}" />
+                </h:panelGroup>
+
+                <p:toolbar>
+                    <f:facet name="left">
+                        Path: #{viewDataBean.selectedFile.absoluteFile}
+                    </f:facet>
+                    <f:facet name="right">
+                        <h:outputText value="Player: #{mediaFileUtil.getMediaPlayer(viewDataBean.selectedFile).toUpperCase()}"
+                                      rendered="#{mediaFileUtil.isMedia(viewDataBean.selectedFile)}"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:toolbar>
+                    <f:facet name="left">
+<!--                        <p:commandButton action="#{viewDataControlBean.playFirstFile()}"
+                                         update="@form"
+                                         title="#{msg['caption.play.first']}"
+                                         icon="fa fa-fast-backward" />
+                        <p:spacer width="3px"/>-->
+                        <p:commandButton action="#{viewDataControlBean.playPreviousFile()}"
+                                         update="@form"
+                                         title="#{msg['caption.play.previous']}"
+                                         icon="fa fa-step-backward" />
+                        <p:spacer width="3px"/>
+                        <p:commandButton action="#{viewDataControlBean.playFile(viewDataBean.selectedFile)}"
+                                         update="@form"
+                                         title="#{msg['caption.play.replay']}"
+                                         icon="fa fa-play" />
+                        <p:spacer width="3px"/>
+                        <p:commandButton action="#{viewDataControlBean.playNextFile()}"
+                                         update="@form"
+                                         title="#{msg['caption.play.next']}"
+                                         icon="fa fa-step-forward" />
+                        <!--                        <p:spacer width="3px"/>
+                                                <p:commandButton action="#{viewDataControlBean.playLastFile()}"
+                                                                 update="@form"
+                                                                 title="#{msg['caption.play.last']}"
+                                                                 icon="fa fa-fast-forward" />-->
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:selectBooleanButton id="repeatButtonId"
+                                               value="#{viewDataBean.repeat}" 
+                                               onLabel="" offLabel="" 
+                                               onIcon="fa fa-repeat" offIcon="fa fa-repeat" 
+                                               style="height: 22px; vertical-align: bottom;"
+                                               styleClass="ui-button-icon-only">
+                            <p:ajax process="@this" 
+                                    listener="#{viewDataControlBean.repeat()}"
+                                    update="shuffleButtonId pollingButtonId @form:pollPanelId"/>
+                        </p:selectBooleanButton>
+                        <p:selectBooleanButton id="shuffleButtonId"
+                                               value="#{viewDataBean.shuffle}" 
+                                               onLabel="" offLabel="" 
+                                               onIcon="fa fa-random" offIcon="fa fa-random" 
+                                               style="height: 22px; vertical-align: bottom;"
+                                               styleClass="ui-button-icon-only">
+                            <p:ajax process="@this" 
+                                    listener="#{viewDataControlBean.shuffle()}"
+                                    update="repeatButtonId pollingButtonId @form:pollPanelId"/>
+                        </p:selectBooleanButton>
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:selectBooleanButton id="pollingButtonId"
+                                               value="#{viewDataBean.polling}" 
+                                               onLabel="" offLabel="" 
+                                               onIcon="fa fa-rss" offIcon="fa fa-rss" 
+                                               style="height: 22px; vertical-align: bottom;"
+                                               styleClass="ui-button-icon-only">
+                            <p:ajax process="@this" 
+                                    listener="#{viewDataControlBean.polling()}"
+                                    update="repeatButtonId shuffleButtonId @form:pollPanelId"/>
+                        </p:selectBooleanButton>
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:commandButton onclick="PF('playListDialog').show();"
+                                         update=":playListFormId"
+                                         title="#{msg['caption.play.playlist']}"
+                                         icon="fa fa-list" />
+                    </f:facet>
+                </p:toolbar>
+                <h:panelGroup rendered="#{viewDataControlBean.fileId != null}">
+                    <p:panelGrid columns="3">
+                        <h:outputLabel value="#{msg['caption.file.name']}" styleClass="label"/>
+                        <h:outputLabel value="#{msg['caption.file.size']}" styleClass="label"/>
+                        <h:outputLabel value="#{msg['caption.file.lastModified']}" styleClass="label"/>
+
+                        <h:outputText value="#{viewDataBean.selectedFile.name}"/>
+                        <h:outputText value="#{viewDataControlBean.getReadableFileSize(viewDataBean.selectedFile)}"/>
+                        <h:outputText value="#{viewDataBean.selectedFile.lastModified()}">
+                            <f:convertDateTime pattern="#{applicationConstants.getVariableValue('FORMAT_TIMESTAMP')}"/>
+                        </h:outputText>
+                    </p:panelGrid>
+
+                    <p:panel header="MP3 Info"
+                             collapsed="false"
+                             toggleable="true"
+                             rendered="#{mediaFileUtil.isMp3(viewDataBean.selectedFile)}">
+                        <p:panelGrid columns="2">
+                            <h:outputLabel value="#{msg['caption.mp3.length']}" styleClass="label"/>
+                            <h:outputText value="#{applicationConstants.getDisplayLength(viewDataBean.selectedMp3Meta.lengthInMilliseconds)}"/>
+
+                            <h:outputLabel value="#{msg['caption.mp3.title']}" styleClass="label"
+                                           rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.title)}"/>
+                            <h:outputText value="#{viewDataBean.selectedMp3Meta.title}"
+                                          rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.title)}"/>
+
+                            <h:outputLabel value="#{msg['caption.mp3.artist']}" styleClass="label"
+                                           rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.artist)}"/>
+                            <h:outputText value="#{viewDataBean.selectedMp3Meta.artist}"
+                                          rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.artist)}"/>
+
+                            <h:outputLabel value="#{msg['caption.mp3.album']}" styleClass="label"
+                                           rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.album)}"/>
+                            <h:outputText value="#{viewDataBean.selectedMp3Meta.album}"
+                                          rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.album)}"/>
+
+                            <h:outputLabel value="#{msg['caption.mp3.track']}" styleClass="label"
+                                           rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.track)}"/>
+                            <h:outputText value="#{viewDataBean.selectedMp3Meta.track}"
+                                          rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.track)}"/>
+
+                            <h:outputLabel value="#{msg['caption.mp3.year']}" styleClass="label"
+                                           rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.year)}"/>
+                            <h:outputText value="#{viewDataBean.selectedMp3Meta.year}"
+                                          rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.year)}"/>
+
+                            <h:outputLabel value="#{msg['caption.mp3.comment']}" styleClass="label"
+                                           rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.comment)}"/>
+                            <h:outputText value="#{viewDataBean.selectedMp3Meta.comment}"
+                                          rendered="#{!applicationConstants.isStringEmpty(viewDataBean.selectedMp3Meta.comment)}"/>
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <p:separator />
+
+                    <p:graphicImage value="#{contentStreamer.streamedContent}"
+                                    rendered="#{mediaFileUtil.isImagePath(viewDataControlBean.fileId)}"
+                                    alt="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"
+                                    title="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"
+                                    width="#{viewDataBean.fileMaxWidth}" height="#{viewDataBean.fileMaxHeight}">
+                        <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
+                    </p:graphicImage>
+
+                    <!--
+                                            <audio preload="auto" controls="true" autoplay="false" loop="false">
+                                                <source src="http://localhost:8888/test.mp3" type="audio/mp3"/>
+                                                Your browser does not support the video tag.
+                                            </audio> 
+                    -->
+
+                    <p:media value="#{contentStreamer.streamedContent}" player="windows" width="100%" height="600px"
+                             rendered="#{mediaFileUtil.isMediaPlayerPath('windows', viewDataControlBean.fileId)}">
+                        <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
+                        <f:param name="AUTOPLAY" value="false" />
+                        <f:param name="autostart" value="false" />
+                    </p:media>
+
+                    <p:media value="#{contentStreamer.streamedContent}" player="quicktime" 
+                             width="100%" 
+                             height="#{mediaFileUtil.isMp3(viewDataBean.selectedFile) ? '100px' : '600px'}"
+                             rendered="#{mediaFileUtil.isMediaPlayerPath('quicktime', viewDataControlBean.fileId)}">
+                        <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
+                        <f:param name="AUTOPLAY" value="false" />
+                        <f:param name="autostart" value="false" />
+                        <f:param name="type" value="video/quicktime" />
+                    </p:media>
+
+                    <p:media value="#{contentStreamer.streamedContent}" player="flash" 
+                             width="#{mediaFileUtil.isSwf(viewDataBean.selectedFile) ? viewDataControlBean.getSwfInfo(viewDataBean.selectedFile).width : '100px'}" 
+                             height="#{mediaFileUtil.isSwf(viewDataBean.selectedFile) ? viewDataControlBean.getSwfInfo(viewDataBean.selectedFile).height : '600px'}"
+                             rendered="#{mediaFileUtil.isMediaPlayerPath('flash', viewDataControlBean.fileId)}">
+                        <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
+                        <f:param name="AUTOPLAY" value="false" />
+                        <f:param name="autostart" value="false" />
+                    </p:media>
+
+                    <p:media value="#{contentStreamer.streamedContent}" player="real" width="100%" height="600px"
+                             rendered="#{mediaFileUtil.isMediaPlayerPath('real', viewDataControlBean.fileId)}">
+                        <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
+                        <f:param name="AUTOPLAY" value="false" />
+                        <f:param name="autostart" value="false" />
+                    </p:media>
+
+                    <p:media value="#{contentStreamer.streamedContent}" player="pdf" width="100%" height="600px"
+                             rendered="#{mediaFileUtil.isMediaPlayerPath('pdf', viewDataControlBean.fileId)}">
+                        <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
+                        <f:param name="AUTOPLAY" value="false" />
+                        <f:param name="autostart" value="false" />
+                    </p:media>
+
+                </h:panelGroup>
+            </h:form>
+
+            <ui:include src="/aboutDialog.xhtml" />
+            <ui:include src="/playListDialog.xhtml"/>
+
+        </h:body>
+    </f:view>
+</html>

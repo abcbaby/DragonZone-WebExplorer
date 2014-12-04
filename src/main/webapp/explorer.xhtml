@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <f:event type="preRenderComponent" listener="#{explorerControlBean.preLoadPage}" />
+
+    <script>
+        function handleZipFolderRequest(xhr, status, args) {
+            if (args.validZipFolderSizeLimit) {
+                document.getElementById('explorerForm:hiddenZipFolderDownloadButtonId').click();
+            }
+        }
+    </script>
+
+    <h:form id="explorerForm">
+        <h:panelGrid columns="1">
+            <h:panelGrid columns="2" 
+                         styleClass="noBorder"
+                         rendered="#{p:ifAnyGranted('ROLE_ADMIN')}">
+                <h:outputText styleClass="ui-icon fa fa-cloud" />
+                <h:outputText value="#{msg['caption.server.drives']}:"/>
+            </h:panelGrid>
+            <p:selectOneButton value="#{explorerBean.selectedDrive}" 
+                               style="max-width: 250px"
+                               rendered="#{p:ifGranted('ROLE_ADMIN')}">
+                <p:ajax listener="#{explorerControlBean.onChangePath()}" 
+                        update="navigatorId :mainForm"/>
+                <f:selectItems value="#{explorerBean.drives}" 
+                               var="drive" 
+                               itemLabel="#{drive.absolutePath}" 
+                               itemValue="#{drive.absolutePath}"/> 
+            </p:selectOneButton>
+
+            <h:panelGrid columns="2" 
+                         styleClass="noBorder">
+                <h:outputText styleClass="ui-icon fa fa-folder-open" />
+                <h:outputText value="#{msg['caption.default.paths']}:"/>
+            </h:panelGrid>
+            <p:selectOneMenu value="#{explorerBean.selectedDrive}" style="min-width: 200px; max-width: 250px">
+                <p:ajax listener="#{explorerControlBean.onChangePath()}" 
+                        update="navigatorId :mainForm"/>
+                <f:selectItems value="#{explorerBean.defaultPathList}" 
+                               var="dir" 
+                               itemLabel="#{dir.absolutePath}" 
+                               itemValue="#{dir.absolutePath}"/> 
+            </p:selectOneMenu>
+        </h:panelGrid>
+
+        <p:separator/>
+
+        <h:panelGroup id="navigatorId">
+            <p:treeTable value="#{explorerBean.rootNode}" 
+                         var="dir"
+                         selectionMode="single" >
+                <p:ajax event="select" 
+                        listener="#{explorerControlBean.onNodeSelect}" 
+                        update="@parent :mainForm"/>
+                <p:ajax event="collapse" 
+                        listener="#{explorerControlBean.onNodeCollapse}" 
+                        update=":explorerForm"/>
+
+                <p:column headerText="#{msg['caption.folder']}">
+                    <h:outputText value="#{applicationConstants.abbreviateFileName(dir.name)}" 
+                                  title="#{dir.name}"
+                                  styleClass="#{dir.hidden ? 'hiddenFile' : ''}"/>
+                </p:column>
+                <p:column rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}"
+                          style="width:20px; text-align:center">
+                    <f:facet name="header">
+                        <p:commandButton id="taskButtonId" icon="fa fa-gear" />
+                        <p:tieredMenu overlay="true" trigger="taskButtonId" my="left top" at="left bottom" style="width:100px">
+                            <p:menuitem value="Create" 
+                                        actionListener="#{explorerControlBean.createSubFolder()}" 
+                                        oncomplete="PF('confirmCreateFolderDialog').show();"
+                                        update=":createFolderFormId"
+                                        icon="fa fa-plus"/>
+                        </p:tieredMenu>                        
+                    </f:facet>
+                    <p:commandButton id="subTaskButtonId" icon="fa fa-gear" />
+                    <p:tieredMenu overlay="true" trigger="subTaskButtonId" my="left top" at="left bottom" style="width:100px">
+                        <p:menuitem value="#{msg['caption.folder.create']}" 
+                                    actionListener="#{explorerControlBean.modifySubFolder(dir)}" 
+                                    oncomplete="PF('confirmCreateFolderDialog').show();"
+                                    update=":createFolderFormId"
+                                    icon="fa fa-plus"/>
+                        <p:menuitem value="#{msg['caption.folder.delete']}" 
+                                    actionListener="#{explorerControlBean.modifySubFolder(dir)}" 
+                                    oncomplete="PF('confirmDeleteFolderDialog').show();"
+                                    update=":deleteFolderFormId"
+                                    icon="fa fa-trash"/>
+                        <p:menuitem value="#{msg['caption.folder.rename']}" 
+                                    actionListener="#{explorerControlBean.loadRename(dir)}" 
+                                    oncomplete="PF('confirmRenameFolderDialog').show();"
+                                    update=":renameFolderFormId"
+                                    icon="fa fa-edit"/>
+                        <p:menuitem value="#{msg['caption.folder.zip']}" 
+                                    actionListener="#{explorerBean.setSelectedFile(dir)}" 
+                                    action="#{explorerControlBean.checkZipFolderTotalSize()}"
+                                    oncomplete="handleZipFolderRequest(xhr, status, args)"
+                                    icon="fa fa-file-archive-o"/>
+                    </p:tieredMenu>
+                </p:column>
+            </p:treeTable>
+        </h:panelGroup>
+        <p:commandButton id="hiddenZipFolderDownloadButtonId"
+                         value="#{msg['caption.folder.zip']} File(s)" 
+                         actionListener="#{explorerControlBean.zipFolder(explorerBean.selectedFile)}" 
+                         style="opacity:0;filter:alpha(opacity=0);font-size:1px;"
+                         ajax="false"/>
+
+    </h:form>
+
+    <ui:include src="/confirmFolderDialogs.xhtml"/>
+
+</ui:composition>
