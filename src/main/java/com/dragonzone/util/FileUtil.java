@@ -133,10 +133,11 @@ public class FileUtil {
                     if (searchMp3Meta && mediaFileUtil.isMp3(file)) {
                         Mp3Meta mp3Meta = Mp3Util.getMp3Meta(file.getAbsolutePath());
                         if ((mp3Meta.getTitle() != null && matchTerms(mp3Meta.getTitle(), searchStr))
+                                || (mp3Meta.getArtist() != null && matchTerms(mp3Meta.getArtist(), searchStr))
 //                                || (mp3Meta.getAlbum() != null && matchTerms(mp3Meta.getAlbum(), searchStr))
 //                                || (mp3Meta.getAlbumArtist() != null && matchTerms(mp3Meta.getAlbumArtist(), searchStr))
-                                || (mp3Meta.getArtist() != null && matchTerms(mp3Meta.getArtist(), searchStr))
-                                || (mp3Meta.getComment() != null && matchTerms(mp3Meta.getComment(), searchStr))) {
+//                                || (mp3Meta.getComment() != null && matchTerms(mp3Meta.getComment(), searchStr))
+                                ) {
                             resultFileList.add(file);
                         }
                     }
@@ -149,7 +150,7 @@ public class FileUtil {
         String[] searchVals = StringUtils.split(searchStr.toLowerCase());
         StringBuilder sbPattern = new StringBuilder("^");
         for (String str : searchVals) {
-            sbPattern.append("(?=.*\\b");
+            sbPattern.append("(.*");
             sbPattern.append(str);
             sbPattern.append(")");
         }

@@ -197,7 +197,9 @@
                                 </h:outputText>
                             </p:column>
 
-                            <p:column selectionMode="multiple" style="width:16px; text-align:center"/>
+                            <p:column selectionMode="multiple" 
+                                      style="width:16px; text-align:center"
+                                      rendered="#{!explorerBean.search}"/>
                         </p:dataTable>
 
                     </h:panelGroup>
