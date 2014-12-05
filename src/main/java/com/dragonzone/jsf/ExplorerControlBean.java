@@ -21,6 +21,7 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.NodeCollapseEvent;
@@ -33,6 +34,7 @@ import org.primefaces.model.UploadedFile;
 @RequestScoped
 public class ExplorerControlBean extends BaseControlBean {
 
+    private static final int MINIMUM_SEARCH_LENGTH = 2;
     @ManagedProperty("#{applicationConstants}")
     private ApplicationConstants applicationConstants;
     @ManagedProperty("#{explorerBean}")
@@ -71,12 +73,16 @@ public class ExplorerControlBean extends BaseControlBean {
     }
 
     public void searchFiles() throws Exception {
-        explorerBean.setSearch(true);
-        explorerBean.setFileList(new ArrayList<File>()); // init list
-        FileUtil.searchFiles((File) explorerBean.getSelectedNode().getData(),
-                explorerBean.getSearchFile(),
-                explorerBean.getFileList(),
-                explorerBean.isSearchMp3Meta());
+        if (StringUtils.strip(explorerBean.getSearchFile()).length() < MINIMUM_SEARCH_LENGTH) {
+            MessageUtil.addErrorMessageByString("You need a mininum of " + MINIMUM_SEARCH_LENGTH + " characters to search!");
+        } else {
+            explorerBean.setSearch(true);
+            explorerBean.setFileList(new ArrayList<File>()); // init list
+            FileUtil.searchFiles((File) explorerBean.getSelectedNode().getData(),
+                    explorerBean.getSearchFile(),
+                    explorerBean.getFileList(),
+                    explorerBean.isSearchMp3Meta());
+        }
     }
 
     public void deleteSelectedFile() {

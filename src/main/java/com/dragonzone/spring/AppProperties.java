@@ -10,10 +10,16 @@ import org.springframework.stereotype.Component;
 public class AppProperties {
     private final static String PATH_SEPARATOR = ";"; 
     private List<String> defaultPathList;
+    private boolean searchMp3Info;
 
     @Autowired
     public void setDefaultPathList(@Value("${app.default.paths}") final String strPaths) {
         this.defaultPathList = Arrays.asList(strPaths.split(PATH_SEPARATOR));
+    }
+
+    @Autowired
+    public void setSearchMp3Info(@Value("${search.mp3.meta}") final String searchMp3Info) {
+        this.searchMp3Info = Boolean.valueOf(searchMp3Info);
     }
 
     /**
@@ -28,5 +34,12 @@ public class AppProperties {
      */
     public void setDefaultPathList(List<String> defaultPathList) {
         this.defaultPathList = defaultPathList;
+    }
+
+    /**
+     * @return the searchMp3Info
+     */
+    public boolean isSearchMp3Info() {
+        return searchMp3Info;
     }
 }

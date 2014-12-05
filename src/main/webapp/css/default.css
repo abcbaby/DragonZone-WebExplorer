@@ -3,6 +3,10 @@
     font-size: 12px;
 }
 
+.ui-growl {
+    top: 45px !important;
+}
+
 a {
     text-decoration: none;
     font-weight: normal !important;

@@ -30,7 +30,14 @@
                                 oncomplete="PF('playListDialog').hide();"
                                 update=":viewDataFormId" />
                         <f:facet name="header">
-                            <h:outputText value="#{msg['caption.total']}: #{viewDataBean.fileList.size()}"/>
+                            <p:toolbar style="border: none;">
+                                <f:facet name="left">
+                                    <h:outputLabel value="#{viewDataBean.selectedFile.parentFile.name}"/>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <h:outputText value="#{msg['caption.total']}: #{viewDataBean.fileList.size()}"/>
+                                </f:facet>
+                            </p:toolbar>
                         </f:facet>
                         <p:column style="width:25px;text-align:center">  
                             <p:commandButton actionListener="#{viewDataControlBean.removeFile(file)}" 

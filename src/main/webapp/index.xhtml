@@ -48,6 +48,7 @@
         </h:form>
 
         <h:form id="mainForm">
+            <p:defaultCommand target="searchButtonId"/>
 
             <p:toolbar>
                 <f:facet name="left">
@@ -59,10 +60,12 @@
                 </f:facet>
                 <f:facet name="right">
                     <h:panelGrid columns="6">
-                        <h:outputLabel value="Include Mp3 Meta"/>
+                        <h:outputLabel value="Include Mp3 Meta"
+                                       rendered="#{appProperties.searchMp3Info}"/>
                         <p:selectBooleanCheckbox id="searchMp3MetaId"
                                                  value="#{explorerBean.searchMp3Meta}"
-                                                 label="#{msg['caption.mp3.search.meta']}">
+                                                 label="#{msg['caption.mp3.search.meta']}"
+                                                 rendered="#{appProperties.searchMp3Info}">
                             <p:ajax process="@this" global="false"/>
                         </p:selectBooleanCheckbox>
                         
@@ -70,7 +73,7 @@
                                                  
                         <p:inputText id="searchInputId" 
                                      value="#{explorerBean.searchFile}" 
-                                     title="#{msg['caption.search']} files, folders, or MP3 Meta Info, use whitespace to find all words"
+                                     title="#{msg['caption.search']} files and folders use whitespace to find all termss"
                                      size="25"
                                      label="#{msg['caption.search']}">
                             <p:ajax process="@this" 
@@ -79,7 +82,8 @@
                         </p:inputText>
                         <p:watermark for="searchInputId" 
                                      value="#{msg['caption.search']}" />
-                        <p:commandLink process="@this searchInputId"
+                        <p:commandLink id="searchButtonId"
+                                       process="@this searchInputId"
                                        actionListener="#{explorerControlBean.searchFiles()}"
                                        update="@form:tabViewId:fileSizeId @form:tabViewId:filePanelId"
                                        title="#{msg['caption.search']}"
