@@ -1,6 +1,9 @@
 DragonZone-WebExplorer
 ======================
 
+![ScreenShot](http://i.imgur.com/GYMHIqv.png)
+
+
 This project uses Spring Framework, Spring Security, JSF 2.1 + PrimeFaces 5.1.2 
 (Note: this is not public, you will need an Elite Primefaces Account to download the JAR files.).
 I use this version because PrimeFaces starting integrating Font Awesome into it's bundle. 
