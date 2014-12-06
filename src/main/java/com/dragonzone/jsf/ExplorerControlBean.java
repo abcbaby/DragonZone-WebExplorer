@@ -319,7 +319,7 @@ public class ExplorerControlBean extends BaseControlBean {
 
         OutputStream output = ec.getResponseOutputStream();
         try (FileInputStream fis = new FileInputStream(explorerBean.getSelectedFile())) {
-            output.write(IOUtils.toByteArray(fis));
+        	IOUtils.copy(fis,output);
         }
 
         fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail since it's already written with a file and closed.
