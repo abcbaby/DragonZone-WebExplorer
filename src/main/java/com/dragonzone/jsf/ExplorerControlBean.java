@@ -46,7 +46,9 @@ public class ExplorerControlBean extends BaseControlBean {
     @Override
     public void preLoadPage() {
         explorerBean.setDefaultPathList(fileDirectoryService.getDefaultPathList());
-        explorerBean.setSelectedDrive(explorerBean.getDefaultPathList().get(0).getAbsolutePath());
+        List<File> pathList = explorerBean.getDefaultPathList();
+        
+        explorerBean.setSelectedDrive(pathList.get(0).getAbsolutePath());
         explorerBean.setRootNode(
                 fileDirectoryService.createFolder(explorerBean.getSelectedDrive(),
                         getSecurityBean().hasRole(ApplicationConstants.ROLE_ADMIN)));
