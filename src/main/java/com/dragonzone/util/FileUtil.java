@@ -3,6 +3,7 @@ package com.dragonzone.util;
 import com.dragonzone.jsf.util.MediaFileUtil;
 import com.dragonzone.mp3.Mp3Meta;
 import com.dragonzone.mp3.Mp3Util;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,6 +15,8 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class FileUtil {
@@ -44,7 +47,7 @@ public class FileUtil {
     public static File zipFiles(List<File> fileList, String omitBasePath) {
         File tmpDir = new File(System.getProperty("java.io.tmpdir"));
         if (!tmpDir.exists()) { // make sure tmpDir exists
-            tmpDir.mkdir();
+            tmpDir.mkdirs();
         }
 
         File zipTempFile = null;
@@ -53,7 +56,7 @@ public class FileUtil {
             byte[] buffer = new byte[1024];
 
             FileOutputStream fout = new FileOutputStream(zipTempFile);
-
+            
             try (ZipOutputStream zout = new ZipOutputStream(fout)) {
                 for (File file : fileList) {
                     //create object of FileInputStream for source file
@@ -62,10 +65,7 @@ public class FileUtil {
                                 ? file.getName()
                                 : file.getAbsolutePath().substring(omitBasePath.length());
                         zout.putNextEntry(new ZipEntry(zipFilePath));
-                        int length;
-                        while ((length = fin.read(buffer)) > 0) {
-                            zout.write(buffer, 0, length);
-                        }
+                        IOUtils.copy(fin, zout);
                         zout.closeEntry();
                     }
                 }
