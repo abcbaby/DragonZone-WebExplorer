@@ -46,7 +46,9 @@ public class ExplorerControlBean extends BaseControlBean {
     @Override
     public void preLoadPage() {
         explorerBean.setDefaultPathList(fileDirectoryService.getDefaultPathList());
-        explorerBean.setSelectedDrive(explorerBean.getDefaultPathList().get(0).getAbsolutePath());
+        List<File> pathList = explorerBean.getDefaultPathList();
+        
+        explorerBean.setSelectedDrive(pathList.get(0).getAbsolutePath());
         explorerBean.setRootNode(
                 fileDirectoryService.createFolder(explorerBean.getSelectedDrive(),
                         getSecurityBean().hasRole(ApplicationConstants.ROLE_ADMIN)));
@@ -317,7 +319,7 @@ public class ExplorerControlBean extends BaseControlBean {
 
         OutputStream output = ec.getResponseOutputStream();
         try (FileInputStream fis = new FileInputStream(explorerBean.getSelectedFile())) {
-            output.write(IOUtils.toByteArray(fis));
+        	IOUtils.copy(fis,output);
         }
 
         fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail since it's already written with a file and closed.
