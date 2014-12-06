@@ -127,7 +127,8 @@ public class FileUtil {
                 }
                 searchFiles(file, searchStr, resultFileList, searchMp3Meta);
             } else {
-                if (matchTerms(file.getName(), searchStr)) {
+                // sometimes the term is in the dir not file name, so concat them
+                if (matchTerms(file.getParentFile().getName() + "/" + file.getName(), searchStr)) { 
                     resultFileList.add(file);
                 } else {
                     if (searchMp3Meta && mediaFileUtil.isMp3(file)) {

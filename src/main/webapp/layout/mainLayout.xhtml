@@ -26,13 +26,13 @@
                 <p:layoutUnit position="center" resizable="true">
                     <ui:insert name="mainContent"/>
 
-                    <p:growl autoUpdate="true"/>
                     <p:ajaxStatus onstart="PF('statusDialog').show();" 
                                   oncomplete="PF('statusDialog').hide();"/>
 
                     <ui:include src="/aboutDialog.xhtml" />
                     <ui:include src="/error/viewExpired.xhtml" />
                     <ui:include src="/statusDialog.xhtml"/>
+                    <ui:include src="/serverMessages.xhtml"/>
                 </p:layoutUnit>
 
             </p:layout>

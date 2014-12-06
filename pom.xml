@@ -16,7 +16,6 @@
         <contact.email>longcdo@gmail.com</contact.email>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <glassfish.javax.el.version>2.2.6</glassfish.javax.el.version>
         <glassfish.javax.faces.version>2.1.29</glassfish.javax.faces.version>
         <spring.version>3.2.12.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
@@ -65,11 +64,6 @@
             <version>${spring.security.version}</version>
         </dependency>
         
-        <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>${glassfish.javax.el.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.faces</artifactId>

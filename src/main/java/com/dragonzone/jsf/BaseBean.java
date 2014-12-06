@@ -1,5 +1,6 @@
 package com.dragonzone.jsf;
 
+import com.dragonzone.jsf.util.MessageUtil;
 import com.dragonzone.jsf.util.SecurityBean;
 import com.dragonzone.mp3.Mp3Meta;
 import com.dragonzone.mp3.Mp3Util;
@@ -25,6 +26,10 @@ public abstract class BaseBean {
 
     public FacesContext getFacesContext() {
         return FacesContext.getCurrentInstance();
+    }
+
+    public boolean hasFacesMessages() {
+        return MessageUtil.hasWarnOrHigherMessage();
     }
 
     public void redirectFatalErrors(String errorMessage, String errorSummary) {
