@@ -45,7 +45,7 @@ public class FileUtil {
     }
 
     public static File zipFiles(List<File> fileList, String omitBasePath) {
-        File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+        File tmpDir = new File(System.getenv("TEMP"));
         if (!tmpDir.exists()) { // make sure tmpDir exists
             tmpDir.mkdirs();
         }
