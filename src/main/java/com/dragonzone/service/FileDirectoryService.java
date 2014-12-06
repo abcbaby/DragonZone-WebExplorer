@@ -33,7 +33,7 @@ public class FileDirectoryService {
             }
         }
         if (fileList.isEmpty()) {
-        	String tempDirName = System.getenv("TEMP");
+        	String tempDirName = System.getProperty("java.io.tmpdir");
         	File tempDir = new File(tempDirName);
         	fileList.add(tempDir);
         	Logger.getLogger(getClass().getName()).log(Level.WARNING, "Defaulting to sharing " + tempDirName);

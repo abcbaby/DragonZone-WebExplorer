@@ -4,14 +4,14 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://java.sun.com/jsf/html">
-    <p:dialog id="statusDialogId" 
+    <p:dialog id="loadingDialogId" 
               appendTo="@(body)"
               modal="true" 
-              widgetVar="statusDialog" 
+              widgetVar="loadingDialog" 
               showHeader="false" 
               draggable="false" 
               resizable="false"
               closable="false">  
-        <p:graphicImage value="/images/loading.png" cache="true" />
+        <p:graphicImage value="/images/loading.png" />
     </p:dialog>  
 </ui:composition>

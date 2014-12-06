@@ -40,12 +40,15 @@
                 <h:outputText styleClass="ui-icon fa fa-folder-open" />
                 <h:outputText value="#{msg['caption.default.paths']}:"/>
             </h:panelGrid>
-            <p:selectOneMenu value="#{explorerBean.selectedDrive}" style="min-width: 200px; max-width: 250px">
+            <p:selectOneMenu value="#{explorerBean.selectedDrive}" 
+                             style="min-width: 225px;"
+                             filter="#{explorerBean.defaultPathList.size() gt 5}"
+                             filterMatchMode="contains">
                 <p:ajax listener="#{explorerControlBean.onChangePath()}" 
                         update="navigatorId :mainForm"/>
                 <f:selectItems value="#{explorerBean.defaultPathList}" 
                                var="dir" 
-                               itemLabel="#{dir.absolutePath}" 
+                               itemLabel="#{applicationConstants.abbreviateFileName(dir.absolutePath)}" 
                                itemValue="#{dir.absolutePath}"/> 
             </p:selectOneMenu>
         </h:panelGrid>
@@ -71,7 +74,7 @@
                 <p:column rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}"
                           style="width:20px; text-align:center">
                     <f:facet name="header">
-                        <p:commandButton id="taskButtonId" icon="fa fa-gear" />
+                        <p:commandButton id="taskButtonId" global="false" icon="fa fa-gear" />
                         <p:tieredMenu overlay="true" trigger="taskButtonId" my="left top" at="left bottom" style="width:100px">
                             <p:menuitem value="Create" 
                                         actionListener="#{explorerControlBean.createSubFolder()}" 
@@ -80,7 +83,7 @@
                                         icon="fa fa-plus"/>
                         </p:tieredMenu>                        
                     </f:facet>
-                    <p:commandButton id="subTaskButtonId" icon="fa fa-gear" />
+                    <p:commandButton id="subTaskButtonId" global="false" icon="fa fa-gear" />
                     <p:tieredMenu overlay="true" trigger="subTaskButtonId" my="left top" at="left bottom" style="width:100px">
                         <p:menuitem value="#{msg['caption.folder.create']}" 
                                     actionListener="#{explorerControlBean.modifySubFolder(dir)}" 
