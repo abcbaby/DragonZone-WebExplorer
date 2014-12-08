@@ -56,7 +56,7 @@ public class FileUtil {
             byte[] buffer = new byte[1024];
 
             FileOutputStream fout = new FileOutputStream(zipTempFile);
-            
+
             try (ZipOutputStream zout = new ZipOutputStream(fout)) {
                 for (File file : fileList) {
                     //create object of FileInputStream for source file
@@ -120,26 +120,30 @@ public class FileUtil {
         MediaFileUtil mediaFileUtil = new MediaFileUtil();
         searchStr = searchStr.toLowerCase();
         File[] files = rootDir.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                if (matchTerms(file.getName(), searchStr)) {
-                    resultFileList.add(file);
-                }
-                searchFiles(file, searchStr, resultFileList, searchMp3Meta);
-            } else {
-                // sometimes the term is in the dir not file name, so concat them
-                if (matchTerms(file.getParentFile().getName() + "/" + file.getName(), searchStr)) { 
-                    resultFileList.add(file);
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    if (matchTerms(file.getName(), searchStr)) {
+                        resultFileList.add(file);
+                    }
+                    searchFiles(file, searchStr, resultFileList, searchMp3Meta);
                 } else {
-                    if (searchMp3Meta && mediaFileUtil.isMp3(file)) {
-                        Mp3Meta mp3Meta = Mp3Util.getMp3Meta(file.getAbsolutePath());
-                        if ((mp3Meta.getTitle() != null && matchTerms(mp3Meta.getTitle(), searchStr))
-                                || (mp3Meta.getArtist() != null && matchTerms(mp3Meta.getArtist(), searchStr))
-//                                || (mp3Meta.getAlbum() != null && matchTerms(mp3Meta.getAlbum(), searchStr))
-//                                || (mp3Meta.getAlbumArtist() != null && matchTerms(mp3Meta.getAlbumArtist(), searchStr))
-//                                || (mp3Meta.getComment() != null && matchTerms(mp3Meta.getComment(), searchStr))
-                                ) {
-                            resultFileList.add(file);
+                    // sometimes the term is in the dir not file name, so concat them
+                    String filename = file.getParentFile() == null
+                            ? file.getName()
+                            : file.getParentFile().getName() + "/" + file.getName();
+                    if (matchTerms(filename, searchStr)) {
+                        resultFileList.add(file);
+                    } else {
+                        if (searchMp3Meta && mediaFileUtil.isMp3(file)) {
+                            Mp3Meta mp3Meta = Mp3Util.getMp3Meta(file.getAbsolutePath());
+                            if ((mp3Meta.getTitle() != null && matchTerms(mp3Meta.getTitle(), searchStr))
+                                    || (mp3Meta.getArtist() != null && matchTerms(mp3Meta.getArtist(), searchStr)) //                                || (mp3Meta.getAlbum() != null && matchTerms(mp3Meta.getAlbum(), searchStr))
+                                    //                                || (mp3Meta.getAlbumArtist() != null && matchTerms(mp3Meta.getAlbumArtist(), searchStr))
+                                    //                                || (mp3Meta.getComment() != null && matchTerms(mp3Meta.getComment(), searchStr))
+                                    ) {
+                                resultFileList.add(file);
+                            }
                         }
                     }
                 }
@@ -156,7 +160,7 @@ public class FileUtil {
             sbPattern.append(")");
         }
         sbPattern.append(".+$");
-        
+
         return Pattern.matches(sbPattern.toString(), input.toLowerCase());
     }
 }

@@ -28,19 +28,19 @@ public class FileDirectoryService {
             if (file.exists()) {
                 fileList.add(file);
             } else {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, 
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE,
                         "Path does not exists: {0}", file.getAbsolutePath());
             }
         }
         if (fileList.isEmpty()) {
-        	String tempDirName = System.getenv("TEMP");
-        	File tempDir = new File(tempDirName);
-        	fileList.add(tempDir);
-        	Logger.getLogger(getClass().getName()).log(Level.WARNING, "Defaulting to sharing " + tempDirName);
+            String tempDirName = System.getProperty("java.io.tmpdir");
+            File tempDir = new File(tempDirName);
+            fileList.add(tempDir);
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Defaulting to sharing " + tempDirName);
         }
         return fileList;
     }
-    
+
     public boolean isDefaultPath(File file) {
         boolean hasDefaultPath = false;
         List<File> defaultPathList = getDefaultPathList();

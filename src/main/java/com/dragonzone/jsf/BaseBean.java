@@ -23,6 +23,8 @@ public abstract class BaseBean {
     private SecurityBean securityBean;
     @ManagedProperty("#{appProperties}")
     private AppProperties appProperties;
+    @ManagedProperty("#{applicationConstants}")
+    private ApplicationConstants applicationConstants;
 
     public FacesContext getFacesContext() {
         return FacesContext.getCurrentInstance();
@@ -152,5 +154,19 @@ public abstract class BaseBean {
      */
     public void setAppProperties(AppProperties appProperties) {
         this.appProperties = appProperties;
+    }
+
+    /**
+     * @return the applicationConstants
+     */
+    public ApplicationConstants getApplicationConstants() {
+        return applicationConstants;
+    }
+
+    /**
+     * @param applicationConstants the applicationConstants to set
+     */
+    public void setApplicationConstants(ApplicationConstants applicationConstants) {
+        this.applicationConstants = applicationConstants;
     }
 }

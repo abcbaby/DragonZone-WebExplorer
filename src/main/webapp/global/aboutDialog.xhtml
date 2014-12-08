@@ -32,7 +32,10 @@
                         <p:graphicImage value="/images/logo-large.png" width="48" height="48"/><br/><br/>
                         <h:outputLabel value="Developed and supported by #{msg['dev.team']}."/><br/>
                         <h:outputLabel value="Contact Info: #{msg['contact.email']}"/><br/>
-                        <h:outputLabel value="App Name: #{msg['app.name']}"/><br/>
+                        <h:outputLabel value="App Name: "/>
+                        <h:outputLink value="#{msg['app.url']}" target="_blank" style="color: blue;">
+                            <h:outputLabel value="#{msg['app.name']}"/>
+                        </h:outputLink><br/>
                         <h:outputLabel value="Version: #{msg['app.version']}"/>
                     </h:panelGroup>
                 </h:panelGrid>

@@ -1,7 +1,6 @@
 package com.dragonzone.jsf;
 
 import com.dragonzone.jsf.util.MediaFileUtil;
-import com.dragonzone.service.FileDirectoryService;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,8 +18,6 @@ public class ExplorerBean implements Serializable {
 
     private static final long serialVersionUID = -3980094244475127787L;
 
-    @ManagedProperty("#{fileDirectoryService}")
-    private FileDirectoryService fileDirectoryService;
     @ManagedProperty("#{mediaFileUtil}")
     private MediaFileUtil mediaFileUtil;
     private TreeNode rootNode;
@@ -99,10 +96,6 @@ public class ExplorerBean implements Serializable {
 
     public void setSelectedNode(TreeNode selectedNode) {
         this.selectedNode = selectedNode;
-    }
-
-    public void setFileDirectoryService(FileDirectoryService fileDirectoryService) {
-        this.fileDirectoryService = fileDirectoryService;
     }
 
     public String getSelectedDrive() {
