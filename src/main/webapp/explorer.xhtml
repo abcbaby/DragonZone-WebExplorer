@@ -64,7 +64,7 @@
                         update="@parent :mainForm"/>
                 <p:ajax event="collapse" 
                         listener="#{explorerControlBean.onNodeCollapse}" 
-                        update=":explorerForm"/>
+                        update="@form"/>
 
                 <p:column headerText="#{msg['caption.folder']}">
                     <h:outputText value="#{applicationConstants.abbreviateFileName(dir.name)}" 
@@ -100,6 +100,11 @@
                                     oncomplete="PF('confirmRenameFolderDialog').show();"
                                     update=":renameFolderFormId"
                                     icon="fa fa-edit"/>
+                        <p:menuitem value="#{msg['caption.folder.move']}" 
+                                    actionListener="#{explorerBean.setSelectedFile(dir)}" 
+                                    oncomplete="PF('moveDialog').show();"
+                                    update=":moveFormId"
+                                    icon="fa fa-exchange"/>
                         <p:menuitem value="#{msg['caption.folder.zip']}" 
                                     actionListener="#{explorerBean.setSelectedFile(dir)}" 
                                     action="#{explorerControlBean.checkZipFolderTotalSize()}"

@@ -47,7 +47,7 @@ public class ExplorerControlBean extends BaseControlBean {
     public void preLoadPage() {
         explorerBean.setDefaultPathList(fileDirectoryService.getDefaultPathList());
         List<File> pathList = explorerBean.getDefaultPathList();
-        
+
         explorerBean.setSelectedDrive(pathList.get(0).getAbsolutePath());
         explorerBean.setRootNode(
                 fileDirectoryService.createFolder(explorerBean.getSelectedDrive(),
@@ -132,6 +132,11 @@ public class ExplorerControlBean extends BaseControlBean {
         }
         if (createFolder) {
             if (newFolder.mkdir()) {
+                if (folder.getParentFile() == null) {
+                    currentNode = new DefaultTreeNode(folder, null);
+                    explorerBean.setRootNode(currentNode);
+                }
+
                 // refresh folder
                 nodeSelect(currentNode);
 
@@ -319,7 +324,7 @@ public class ExplorerControlBean extends BaseControlBean {
 
         OutputStream output = ec.getResponseOutputStream();
         try (FileInputStream fis = new FileInputStream(explorerBean.getSelectedFile())) {
-        	IOUtils.copy(fis,output);
+            IOUtils.copy(fis, output);
         }
 
         fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail since it's already written with a file and closed.

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:fragment>
+        <script>
+            function handleMoveRequest(xhr, status, args) {
+                if (args.validMove) {
+                    PF('moveDialog').hide();
+                }
+            }
+        </script>
+
+        <p:dialog id="moveDialogId" 
+                  appendTo="@(body)"
+                  modal="true"                  
+                  dynamic="true"
+                  header="Move" 
+                  closeOnEscape="true"
+                  closable="true"
+                  draggable="false"
+                  resizable="true"
+                  widgetVar="moveDialog">  
+            <h:form id="moveFormId">  
+                <h:outputLabel value="From: #{applicationConstants.abbreviateFileName(explorerBean.selectedFile.absolutePath)}"
+                               title="#{explorerBean.selectedFile.absolutePath}"
+                               styleClass="label"/>
+                
+                <p:spacer height="5px"/>                                     
+                <p:separator/>
+
+                <h:outputLabel value="To: "
+                               title="#{explorerBean.selectedFile.absolutePath}"
+                               styleClass="label"/>
+                
+                <p:scrollPanel mode="native" style="width:400px;height:400px">
+
+                    <ui:include src="/explorerSelect.xhtml"/>
+
+                </p:scrollPanel>
+
+                <p:spacer height="5px"/>                                     
+                <p:separator/>
+                <p:spacer height="5px"/>
+
+                <p:commandButton value="Move" 
+                                 actionListener="#{moveControlBean.move()}"
+                                 oncomplete="handleMoveRequest(xhr, status, args)"
+                                 icon="fa fa-exchange"
+                                 update=":explorerForm :mainForm"/>
+
+            </h:form>
+        </p:dialog>
+    </ui:fragment>
+</ui:composition>

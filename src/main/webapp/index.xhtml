@@ -15,7 +15,7 @@
                     PF('logoBar').hide();
                 }, 3000);
             });
-            
+
             function handleZipFileRequest(xhr, status, args) {
                 if (args.validZipFileSizeLimit) {
                     document.getElementById('mainForm:tabViewId:hiddenZipFileDownloadButtonId').click();
@@ -68,9 +68,9 @@
                                                  rendered="#{appProperties.searchMp3Info}">
                             <p:ajax process="@this" global="false"/>
                         </p:selectBooleanCheckbox>
-                        
+
                         <p:spacer width="3"/>
-                                                 
+
                         <p:inputText id="searchInputId" 
                                      value="#{explorerBean.searchFile}" 
                                      title="#{msg['caption.search']} files and folders use whitespace to find all termss"
@@ -153,19 +153,33 @@
                                     update="@form:tabViewId:detailTabId:actionsMenuId" />
 
                             <p:column rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}">
-                                <p:commandButton actionListener="#{explorerControlBean.loadRename(file)}" 
-                                                 oncomplete="PF('confirmRenameDialog').show();"
-                                                 update=":renameFileFormId"
-                                                 title="#{msg['caption.file.rename']} #{file.name}?"
-                                                 disabled="#{file.directory}"
-                                                 icon="fa fa-edit" />
-                                <p:spacer width="3"/>
-                                <p:commandButton actionListener="#{explorerBean.setSelectedFile(file)}" 
-                                                 oncomplete="PF('confirmDeleteDialog').show();"
-                                                 update=":deleteFileFormId"
-                                                 title="#{msg['caption.file.delete']} #{file.name}?"
-                                                 disabled="#{file.directory}"
-                                                 icon="fa fa-trash" />
+                                <p:commandButton id="subTaskButtonId" global="false" icon="fa fa-gear" />
+                                <p:tieredMenu overlay="true" 
+                                              trigger="subTaskButtonId" 
+                                              my="left top" 
+                                              at="left bottom" 
+                                              style="width:100px">
+                                    <p:menuitem value="#{msg['caption.file.rename']}"
+                                                actionListener="#{explorerControlBean.loadRename(file)}" 
+                                                oncomplete="PF('confirmRenameDialog').show();"
+                                                update=":renameFileFormId"
+                                                title="#{msg['caption.file.rename']} #{file.name}?"
+                                                disabled="#{file.directory}"
+                                                icon="fa fa-edit" />
+                                    <p:menuitem value="#{msg['caption.file.delete']}"
+                                                actionListener="#{explorerBean.setSelectedFile(file)}" 
+                                                oncomplete="PF('confirmDeleteDialog').show();"
+                                                update=":deleteFileFormId"
+                                                title="#{msg['caption.file.delete']} #{file.name}?"
+                                                disabled="#{file.directory}"
+                                                icon="fa fa-trash" />
+                                    <p:menuitem value="#{msg['caption.file.move']}"
+                                                actionListener="#{explorerBean.setSelectedFile(file)}" 
+                                                oncomplete="PF('moveDialog').show();"
+                                                update=":moveFormId"
+                                                title="#{msg['caption.file.move']} #{file.name}?"
+                                                icon="fa fa-exchange"/>
+                                </p:tieredMenu>
                             </p:column>
                             <p:column> 
                                 <p:commandButton actionListener="#{explorerBean.setSelectedFile(file)}" 
@@ -341,6 +355,7 @@
         </h:form>
 
         <ui:include src="/confirmDialogs.xhtml"/>
+        <ui:include src="/moveDialog.xhtml"/>
 
     </ui:define>
 </ui:composition>
