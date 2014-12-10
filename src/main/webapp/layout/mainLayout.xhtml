@@ -18,7 +18,7 @@
         </h:head>
 
         <h:body>
-            <p:layout fullPage="true">
+            <p:layout fullPage="#{mySessionBean.supportSticky ? false : true}">
                 <p:layoutUnit position="west" header="#{p:remoteUser().toUpperCase()} #{msg['caption.explorer']}" gutter="1" resizable="true" collapsible="true" minSize="200">
                     <ui:include src="/explorer.xhtml" />
                 </p:layoutUnit>

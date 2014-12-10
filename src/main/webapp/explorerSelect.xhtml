@@ -7,42 +7,44 @@
                 xmlns:h="http://java.sun.com/jsf/html">
 
     <f:event type="preRenderComponent" listener="#{moveControlBean.preLoadPage}" />
-    
-    <h:panelGrid columns="1">
-        <h:panelGrid columns="2" 
-                     styleClass="noBorder"
-                     rendered="#{p:ifAnyGranted('ROLE_ADMIN')}">
-            <h:outputText styleClass="ui-icon fa fa-cloud" />
-            <h:outputText value="#{msg['caption.server.drives']}:"/>
-        </h:panelGrid>
-        <p:selectOneButton value="#{moveBean.selectedDrive}" 
-                           style="max-width: 250px"
-                           rendered="#{p:ifGranted('ROLE_ADMIN')}">
-            <p:ajax listener="#{moveControlBean.onChangePath()}" 
-                    update="navigatorId"/>
-            <f:selectItems value="#{moveBean.drives}" 
-                           var="drive" 
-                           itemLabel="#{drive.absolutePath}" 
-                           itemValue="#{drive.absolutePath}"/> 
-        </p:selectOneButton>
 
-        <h:panelGrid columns="2" 
-                     styleClass="noBorder">
-            <h:outputText styleClass="ui-icon fa fa-folder-open" />
-            <h:outputText value="#{msg['caption.default.paths']}:"/>
-        </h:panelGrid>
-        <p:selectOneMenu value="#{moveBean.selectedDrive}" 
-                         style="min-width: 225px;"
-                         filter="#{moveBean.defaultPathList.size() gt 5}"
-                         filterMatchMode="contains">
-            <p:ajax listener="#{moveControlBean.onChangePath()}" 
-                    update="navigatorId"/>
-            <f:selectItems value="#{moveBean.defaultPathList}" 
-                           var="dir" 
-                           itemLabel="#{applicationConstants.abbreviateFileName(dir.absolutePath)}" 
-                           itemValue="#{dir.absolutePath}"/> 
-        </p:selectOneMenu>
-    </h:panelGrid>
+    <p:toolbar>
+        <f:facet name="left">
+            <h:panelGrid columns="2" 
+                         styleClass="noBorder"
+                         rendered="#{p:ifAnyGranted('ROLE_ADMIN')}">
+                <h:outputText styleClass="ui-icon fa fa-cloud" />
+                <h:outputText value="#{msg['caption.server.drives']}:"/>
+            </h:panelGrid>
+            <p:selectOneButton value="#{moveBean.selectedDrive}" 
+                               style="max-width: 250px"
+                               rendered="#{p:ifGranted('ROLE_ADMIN')}">
+                <p:ajax listener="#{moveControlBean.onChangePath()}" 
+                        update="navigatorId"/>
+                <f:selectItems value="#{moveBean.drives}" 
+                               var="drive" 
+                               itemLabel="#{drive.absolutePath}" 
+                               itemValue="#{drive.absolutePath}"/> 
+            </p:selectOneButton>
+
+            <h:panelGrid columns="2" 
+                         styleClass="noBorder">
+                <h:outputText styleClass="ui-icon fa fa-folder-open" />
+                <h:outputText value="#{msg['caption.default.paths']}:"/>
+            </h:panelGrid>
+            <p:selectOneMenu value="#{moveBean.selectedDrive}" 
+                             style="min-width: 225px;"
+                             filter="#{moveBean.defaultPathList.size() gt 5}"
+                             filterMatchMode="contains">
+                <p:ajax listener="#{moveControlBean.onChangePath()}" 
+                        update="navigatorId"/>
+                <f:selectItems value="#{moveBean.defaultPathList}" 
+                               var="dir" 
+                               itemLabel="#{applicationConstants.abbreviateFileName(dir.absolutePath)}" 
+                               itemValue="#{dir.absolutePath}"/> 
+            </p:selectOneMenu>
+        </f:facet>
+    </p:toolbar>
 
     <p:separator/>
 

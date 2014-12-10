@@ -17,41 +17,44 @@
     </script>
 
     <h:form id="explorerForm">
-        <h:panelGrid columns="1">
-            <h:panelGrid columns="2" 
-                         styleClass="noBorder"
-                         rendered="#{p:ifAnyGranted('ROLE_ADMIN')}">
-                <h:outputText styleClass="ui-icon fa fa-cloud" />
-                <h:outputText value="#{msg['caption.server.drives']}:"/>
-            </h:panelGrid>
-            <p:selectOneButton value="#{explorerBean.selectedDrive}" 
-                               style="max-width: 250px"
-                               rendered="#{p:ifGranted('ROLE_ADMIN')}">
-                <p:ajax listener="#{explorerControlBean.onChangePath()}" 
-                        update="navigatorId :mainForm"/>
-                <f:selectItems value="#{explorerBean.drives}" 
-                               var="drive" 
-                               itemLabel="#{drive.absolutePath}" 
-                               itemValue="#{drive.absolutePath}"/> 
-            </p:selectOneButton>
+        <p:sticky target="cloudToolBarId" />
+        <p:toolbar id="cloudToolBarId">
+            <f:facet name="left">
+                <h:panelGrid columns="2" 
+                             styleClass="noBorder"
+                             rendered="#{p:ifAnyGranted('ROLE_ADMIN')}">
+                    <h:outputText styleClass="ui-icon fa fa-cloud" />
+                    <h:outputText value="#{msg['caption.server.drives']}:"/>
+                </h:panelGrid>
+                <p:selectOneButton value="#{explorerBean.selectedDrive}" 
+                                   style="max-width: 250px"
+                                   rendered="#{p:ifGranted('ROLE_ADMIN')}">
+                    <p:ajax listener="#{explorerControlBean.onChangePath()}" 
+                            update="navigatorId :mainForm"/>
+                    <f:selectItems value="#{explorerBean.drives}" 
+                                   var="drive" 
+                                   itemLabel="#{drive.absolutePath}" 
+                                   itemValue="#{drive.absolutePath}"/> 
+                </p:selectOneButton>
 
-            <h:panelGrid columns="2" 
-                         styleClass="noBorder">
-                <h:outputText styleClass="ui-icon fa fa-folder-open" />
-                <h:outputText value="#{msg['caption.default.paths']}:"/>
-            </h:panelGrid>
-            <p:selectOneMenu value="#{explorerBean.selectedDrive}" 
-                             style="min-width: 225px;"
-                             filter="#{explorerBean.defaultPathList.size() gt 5}"
-                             filterMatchMode="contains">
-                <p:ajax listener="#{explorerControlBean.onChangePath()}" 
-                        update="navigatorId :mainForm"/>
-                <f:selectItems value="#{explorerBean.defaultPathList}" 
-                               var="dir" 
-                               itemLabel="#{applicationConstants.abbreviateFileName(dir.absolutePath)}" 
-                               itemValue="#{dir.absolutePath}"/> 
-            </p:selectOneMenu>
-        </h:panelGrid>
+                <h:panelGrid columns="2" 
+                             styleClass="noBorder">
+                    <h:outputText styleClass="ui-icon fa fa-folder-open" />
+                    <h:outputText value="#{msg['caption.default.paths']}:"/>
+                </h:panelGrid>
+                <p:selectOneMenu value="#{explorerBean.selectedDrive}" 
+                                 style="min-width: 225px;"
+                                 filter="#{explorerBean.defaultPathList.size() gt 5}"
+                                 filterMatchMode="contains">
+                    <p:ajax listener="#{explorerControlBean.onChangePath()}" 
+                            update="navigatorId :mainForm"/>
+                    <f:selectItems value="#{explorerBean.defaultPathList}" 
+                                   var="dir" 
+                                   itemLabel="#{applicationConstants.abbreviateFileName(dir.absolutePath)}" 
+                                   itemValue="#{dir.absolutePath}"/> 
+                </p:selectOneMenu>
+            </f:facet>
+        </p:toolbar>
 
         <p:separator/>
 

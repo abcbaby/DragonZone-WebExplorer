@@ -49,8 +49,10 @@
 
         <h:form id="mainForm">
             <p:defaultCommand target="searchButtonId"/>
+            
+            <p:sticky target="searchToolBarId" />
 
-            <p:toolbar>
+            <p:toolbar id="searchToolBarId">
                 <f:facet name="left">
                     <p:commandLink value="Path: #{explorerControlBean.displayFolderFullPath}"
                                    actionListener="#{explorerBean.setSearch(false)}"
