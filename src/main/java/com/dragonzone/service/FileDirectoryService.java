@@ -1,21 +1,20 @@
 package com.dragonzone.service;
 
-import com.dragonzone.jsf.BaseBean;
 import com.dragonzone.spring.AppProperties;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.slf4j.LoggerFactory;
 
 @ManagedBean
 @ApplicationScoped
 public class FileDirectoryService {
+    final static org.slf4j.Logger logger = LoggerFactory.getLogger(FileDirectoryService.class);
 
     public static final String DEFAULT_ROOT_PATH = "C:\\";
     @ManagedProperty("#{appProperties}")
@@ -28,15 +27,14 @@ public class FileDirectoryService {
             if (file.exists()) {
                 fileList.add(file);
             } else {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                        "Path does not exists: {0}", file.getAbsolutePath());
+                logger.warn("Omitting path since it does not exists: " + file.getAbsolutePath());
             }
         }
         if (fileList.isEmpty()) {
             String tempDirName = System.getProperty("java.io.tmpdir");
             File tempDir = new File(tempDirName);
             fileList.add(tempDir);
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Defaulting to sharing " + tempDirName);
+            logger.warn("Defaulting to sharing " + tempDirName);
         }
         return fileList;
     }

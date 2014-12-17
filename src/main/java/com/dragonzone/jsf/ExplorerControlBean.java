@@ -13,8 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -29,10 +27,13 @@ import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedBean
 @RequestScoped
 public class ExplorerControlBean extends BaseControlBean {
+    final static Logger logger = LoggerFactory.getLogger(ExplorerControlBean.class);
 
     private static final int MINIMUM_SEARCH_LENGTH = 2;
     @ManagedProperty("#{applicationConstants}")
@@ -64,12 +65,11 @@ public class ExplorerControlBean extends BaseControlBean {
             MessageUtil.addErrorMessageByString(event.getFile().getFileName() + " already exists.");
         } else {
             try (FileOutputStream fos = new FileOutputStream(newFile);) {
-                fos.write(tempFile.getContents());
+                IOUtils.copy(tempFile.getInputstream(), fos);
                 nodeSelect(explorerBean.getSelectedNode()); // refresh list w/ new item
                 MessageUtil.addInfoMessageByString(event.getFile().getFileName() + " is uploaded.");
             } catch (IOException e) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                        "Error trying to upload file: " + newFile.getAbsolutePath(), e);
+                logger.error("Error trying to upload file: " + newFile.getAbsolutePath(), e);
             }
         }
     }

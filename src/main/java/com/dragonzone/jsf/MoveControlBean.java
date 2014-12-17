@@ -4,12 +4,8 @@ import com.dragonzone.jsf.util.MessageUtil;
 import com.dragonzone.service.FileDirectoryService;
 import com.dragonzone.util.FileUtil;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -18,10 +14,13 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.TreeNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedBean
 @RequestScoped
 public class MoveControlBean extends BaseControlBean {
+    final static Logger logger = LoggerFactory.getLogger(MoveControlBean.class);
 
     @ManagedProperty("#{applicationConstants}")
     private ApplicationConstants applicationConstants;
@@ -66,8 +65,7 @@ public class MoveControlBean extends BaseControlBean {
                         + " moved to " + dirTo.getAbsolutePath() + " was successful.");
             } catch (Exception e) {
                 MessageUtil.addErrorMessageByString("Folder cannot be moved!");
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                        "Error trying to move from " + fileFrom.getAbsolutePath()
+                logger.error("Error trying to move from " + fileFrom.getAbsolutePath()
                         + " to " + dirTo.getAbsolutePath(), e);
             }
         }

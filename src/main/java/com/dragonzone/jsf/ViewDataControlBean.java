@@ -10,18 +10,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.imageio.ImageIO;
 import org.primefaces.event.SelectEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import resnbl.android.swfview.SWFInfo;
 
 @ManagedBean
 @RequestScoped
 public class ViewDataControlBean extends ExplorerControlBean {
+    final static Logger logger = LoggerFactory.getLogger(ViewDataControlBean.class);
 
     @ManagedProperty("#{fileDirectoryService}")
     private FileDirectoryService fileDirectoryService;
@@ -74,8 +75,7 @@ public class ViewDataControlBean extends ExplorerControlBean {
             viewDataBean.setFileMaxWidth(image.getWidth() < ViewDataBean.MAX_WIDTH ? image.getWidth() : ViewDataBean.MAX_WIDTH);
             viewDataBean.setFileMaxHeight(image.getHeight() < ViewDataBean.MAX_HEIGHT ? image.getHeight() : ViewDataBean.MAX_HEIGHT);
         } catch (IOException ex) {
-            Logger.getLogger(ViewDataControlBean.class.getName()).log(Level.SEVERE,
-                    "Error trying to read image file: " + viewDataBean.getSelectedFile().getAbsolutePath(), ex);
+            logger.error("Error trying to read image file: " + viewDataBean.getSelectedFile().getAbsolutePath(), ex);
         }
     }
 

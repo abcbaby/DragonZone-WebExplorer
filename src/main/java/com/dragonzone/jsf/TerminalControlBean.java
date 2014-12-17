@@ -2,23 +2,22 @@ package com.dragonzone.jsf;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedBean
 @RequestScoped
 public class TerminalControlBean extends BaseControlBean {
+    final static Logger logger = LoggerFactory.getLogger(TerminalControlBean.class);
 
     public enum CommandEnum {
 
@@ -119,12 +118,9 @@ public class TerminalControlBean extends BaseControlBean {
                 isReachable = true;
             }
         } catch (IOException e1) {
-            System.out.println(e1.getMessage());
-            Logger.getLogger(TerminalControlBean.class.toString()).log(Level.SEVERE,
-                    "Error pinging " + host, e1);
+            logger.error("Error pinging " + host, e1);
         } catch (InterruptedException e) {
-            Logger.getLogger(TerminalControlBean.class.toString()).log(Level.SEVERE,
-                    "Error pinging " + host, e);
+            logger.error("Error pinging " + host, e);
         }
         return isReachable;
     }
@@ -142,8 +138,7 @@ public class TerminalControlBean extends BaseControlBean {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(TerminalControlBean.class.getName()).log(Level.SEVERE,
-                    "Error tail file: " + file.getAbsolutePath(), ex);
+            logger.error("Error tail file: " + file.getAbsolutePath(), ex);
         }
         return sb.toString();
     }

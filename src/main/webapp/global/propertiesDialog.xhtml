@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <p:dialog  id="propertiesDialogId"
+               modal="false"
+               appendTo="@(body)"
+               dynamic="false"
+               header="System Properties"
+               resizable="true"
+               closable="true"
+               closeOnEscape="true"
+               widgetVar="propertiesDialog">
+        <h:form id="proprtiesFormId">
+            <p:scrollPanel mode="native" style="width:600px;height:400px">
+                <p:panelGrid columns="2" columnClasses="ui-widget-header">
+                    <h:outputText value="spring.version"/>
+                    <h:outputText value="#{msg['spring.version']}"/>
+
+                    <h:outputText value="spring.security.version"/>
+                    <h:outputText value="#{msg['spring.security.version']}"/>
+
+                    <h:outputText value="logback.version"/>
+                    <h:outputText value="#{msg['logback.version']}"/>
+
+                    <h:outputText value="slf4j.version"/>
+                    <h:outputText value="#{msg['slf4j.version']}"/>
+
+                    <h:outputText value="glassfish.javax.faces.version"/>
+                    <h:outputText value="#{msg['glassfish.javax.faces.version']}"/>
+
+                    <h:outputText value="primefaces.version"/>
+                    <h:outputText value="#{msg['primefaces.version']}"/>
+                </p:panelGrid>
+
+                <p:spacer height="10"/>
+
+                <p:dataTable value="#{applicationConstants.systemPropList}" 
+                             var="entry"> 
+                    <p:column headerText="Name">
+                        #{entry.key}
+                    </p:column>
+                    <p:column headerText="Value">
+                        #{entry.value}
+                    </p:column>
+                </p:dataTable>
+            </p:scrollPanel>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

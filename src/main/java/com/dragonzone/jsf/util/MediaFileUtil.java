@@ -1,19 +1,21 @@
 package com.dragonzone.jsf.util;
 
-import com.dragonzone.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.bean.ApplicationScoped;
 
 import javax.faces.bean.ManagedBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedBean
 @ApplicationScoped
-public class MediaFileUtil {
+public class MediaFileUtil implements Serializable {
+    final static Logger logger = LoggerFactory.getLogger(MediaFileUtil.class);
 
+    private static final long serialVersionUID = -1683775099172487865L;
     private static final String REGEX_PATTERN_MP3 = "^.*(mp3|mpeg)$";
     private static final String REGEX_PATTERN_SWF = "^.*(swf)";
     private static final String MEDIA_PLAYER_WIDOWS = "windows";
@@ -140,8 +142,7 @@ public class MediaFileUtil {
                     mimeType = contentType.toLowerCase();
                 }
             } catch (IOException e) {
-                Logger.getLogger(FileUtil.class.getName()).log(Level.SEVERE,
-                        "Error trying to load file: " + file.getAbsolutePath(), e);
+                logger.error("Error trying to load file: " + file.getAbsolutePath(), e);
             }
         }
         return mimeType;

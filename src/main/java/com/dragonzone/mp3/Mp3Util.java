@@ -8,10 +8,10 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Mp3Util {
+    final static org.slf4j.Logger logger = LoggerFactory.getLogger(Mp3Util.class);
 
     private Mp3Util() {
     }
@@ -53,8 +53,7 @@ public class Mp3Util {
                     mp3Meta.setEncoder(id3v2Tag.getEncoder());
                 }
             } catch (IOException | UnsupportedTagException | InvalidDataException ex) {
-                Logger.getLogger(Mp3Util.class.getName()).log(
-                        Level.SEVERE, "Error trying to get Mp3 meta for file: " + filePath);
+                logger.error("Error trying to get Mp3 meta for file: " + filePath);
             }
         }
 

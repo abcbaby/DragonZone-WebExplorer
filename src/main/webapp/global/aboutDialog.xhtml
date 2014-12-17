@@ -6,15 +6,26 @@
                 xmlns:h="http://java.sun.com/jsf/html">
 
     <h:panelGroup style="position: fixed !important; z-index:20 !important; overflow:visible !important; right: 20px !important; bottom: 5px !important;">
-        <p:commandLink immediate="true" 
-                       onclick="PF('aboutDialog').show();"
-                       global="false"
-                       title="About">
-            <p:graphicImage alt="About"
-                            title="About" 
-                            style="border: 0;"
-                            value="/images/logo.png" />                                           
-        </p:commandLink>
+        <h:form id="aboutLinkFormId">
+            <p:commandLink id="aboutLinkId"
+                           immediate="true" 
+                           onclick="PF('aboutDialog').show();"
+                           global="false"
+                           title="About">
+                <p:graphicImage alt="About"
+                                title="About" 
+                                style="border: 0;"
+                                value="/images/logo.png" />                                           
+            </p:commandLink>
+            <p:contextMenu for="aboutLinkId"
+                           rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}">
+                <p:menuitem value="System Properties" 
+                            immediate="true" 
+                            onclick="PF('propertiesDialog').show();"
+                            icon="fa fa-info"
+                            global="false" />
+            </p:contextMenu>
+        </h:form>
     </h:panelGroup>
 
     <p:dialog  id="aboutDialogId"
@@ -37,10 +48,19 @@
                             <h:outputLabel value="#{msg['app.name']}"/>
                         </h:outputLink><br/>
                         <h:outputLabel value="Version: #{msg['app.version']}"/>
+                        <p:separator rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}"/>
+                        <p:commandLink value="System Properties"
+                                       immediate="true" 
+                                       onclick="PF('propertiesDialog').show();"
+                                       global="false" 
+                                       style="color: blue;"
+                                       rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}"/>
                     </h:panelGroup>
                 </h:panelGrid>
             </p:panel>
         </h:form>
     </p:dialog>
+
+    <ui:include src="/global/propertiesDialog.xhtml" />
 
 </ui:composition>

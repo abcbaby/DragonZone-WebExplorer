@@ -10,16 +10,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 public class FileUtil {
+    final static org.slf4j.Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     public static final long ZIP_FILE_SIZE_LIMIT = 1048576000; // 1GB
 
@@ -71,7 +71,7 @@ public class FileUtil {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(FileUtil.class.getName()).log(Level.SEVERE, "Error trying to zip file", ex);
+            logger.error("Error trying to zip file", ex);
         }
 
         return zipTempFile;

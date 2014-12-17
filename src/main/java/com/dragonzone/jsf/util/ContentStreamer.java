@@ -1,15 +1,10 @@
 package com.dragonzone.jsf.util;
 
-import com.dragonzone.jsf.BaseBean;
 import com.dragonzone.security.AESEncryption;
-import com.dragonzone.util.FileUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.file.Files;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.bean.ApplicationScoped;
 
 import javax.faces.bean.ManagedBean;
@@ -19,6 +14,8 @@ import javax.servlet.ServletContext;
 
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedBean
 @ApplicationScoped
@@ -28,6 +25,7 @@ import org.primefaces.model.StreamedContent;
  * http://stackoverflow.com/questions/10073905/display-database-blob-images-in-pgraphicimage-inside-uirepeat/10161878#10161878
  */
 public class ContentStreamer {
+    final static Logger logger = LoggerFactory.getLogger(ContentStreamer.class);
 
     private static final int DEFAULT_FILE_SIZE_LIMIT = 1024 * 1024 * 50; // 50MB
 
@@ -68,8 +66,7 @@ public class ContentStreamer {
                         String mimeType = Files.probeContentType(file.toPath());
                         return new DefaultStreamedContent(new FileInputStream(file), mimeType);
                     } catch (Exception e) {
-                        Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                                "Error trying to load file: " + file.getAbsolutePath(), e);
+                        logger.error("Error trying to load file: " + file.getAbsolutePath(), e);
                         return new DefaultStreamedContent();
                     }
                 } else {
@@ -92,8 +89,7 @@ public class ContentStreamer {
         try {
             decryptedMesg = AESEncryption.decrypt(message, key);
         } catch (Throwable e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE,
-                                "Error decrypting message: " + message + " with key: " + key, e);
+            logger.error("Error decrypting message: " + message + " with key: " + key, e);
         }
 
         return decryptedMesg;
