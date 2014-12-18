@@ -12,6 +12,11 @@
 
         <h:form id="viewDataFormId">
             <p:sticky target="stickyPanelId"/>
+            
+            <p:remoteCommand name="toggleActualImageSize" 
+                             process="@this"
+                             actionListener="#{viewDataControlBean.toggleActualImageSize}" 
+                             update="graphicImageId" />
 
             <h:panelGroup id="pollPanelId">
                 <p:poll interval="#{viewDataControlBean.remainingPollInterval}" 
@@ -102,7 +107,7 @@
                     </f:facet>
                 </p:toolbar>
             </h:panelGroup>
-            
+
             <h:panelGroup rendered="#{viewDataControlBean.fileId != null}">
                 <p:panelGrid columns="3">
                     <h:outputLabel value="#{msg['caption.file.name']}" styleClass="label"/>
@@ -158,7 +163,9 @@
 
                 <p:separator />
 
-                <p:graphicImage value="#{contentStreamer.streamedContent}"
+                <p:graphicImage id="graphicImageId"
+                                value="#{contentStreamer.streamedContent}"
+                                onclick="toggleActualImageSize();"
                                 rendered="#{mediaFileUtil.isImagePath(viewDataControlBean.fileId)}"
                                 alt="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"
                                 title="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"

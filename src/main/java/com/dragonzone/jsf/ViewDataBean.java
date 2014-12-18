@@ -24,6 +24,7 @@ public class ViewDataBean implements Serializable {
     private boolean shuffle;
     private boolean repeat;
     private boolean polling;
+    private boolean toggleActualImageSize;
     private Date lastLoaded;
 
     /**
@@ -178,5 +179,19 @@ public class ViewDataBean implements Serializable {
      */
     public void setRepeat(boolean repeat) {
         this.repeat = repeat;
+    }
+
+    /**
+     * @return the toggleActualImageSize
+     */
+    public boolean isToggleActualImageSize() {
+        return toggleActualImageSize;
+    }
+
+    /**
+     * @param toggleActualImageSize the toggleActualImageSize to set
+     */
+    public void setToggleActualImageSize(boolean toggleActualImageSize) {
+        this.toggleActualImageSize = toggleActualImageSize;
     }
 }

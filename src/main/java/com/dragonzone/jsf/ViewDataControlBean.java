@@ -22,8 +22,10 @@ import resnbl.android.swfview.SWFInfo;
 @ManagedBean
 @RequestScoped
 public class ViewDataControlBean extends ExplorerControlBean {
+
     final static Logger logger = LoggerFactory.getLogger(ViewDataControlBean.class);
 
+    private static final int SLIDE_SHOW_INTERVAL_IN_SEC = 5;
     @ManagedProperty("#{fileDirectoryService}")
     private FileDirectoryService fileDirectoryService;
     @ManagedProperty("#{mediaFileUtil}")
@@ -42,7 +44,7 @@ public class ViewDataControlBean extends ExplorerControlBean {
             viewDataBean.setFileList(getPlayableFileList());
 
             if (mediaFileUtil.isImage(viewDataBean.getSelectedFile())) {
-                setImageDimensions(viewDataBean.getSelectedFile());
+                setAutoImageDimensions(viewDataBean.getSelectedFile());
             } else if (mediaFileUtil.isMedia(viewDataBean.getSelectedFile())) {
                 if (mediaFileUtil.isMp3(viewDataBean.getSelectedFile())) {
                     viewDataBean.setSelectedMp3Meta(getMp3Meta(viewDataBean.getSelectedFile()));
@@ -67,13 +69,29 @@ public class ViewDataControlBean extends ExplorerControlBean {
         return playableFileList;
     }
 
-    private void setImageDimensions(File file) {
+    private void setAutoImageDimensions(File file) {
+        setImageDimensions(file, viewDataBean.isToggleActualImageSize());
+    }
+
+    public void toggleActualImageSize() {
+        fileId = viewDataBean.getSelectedFile().getAbsolutePath();
+        viewDataBean.setToggleActualImageSize(!viewDataBean.isToggleActualImageSize());
+        setImageDimensions(viewDataBean.getSelectedFile(), viewDataBean.isToggleActualImageSize());
+    }
+
+    private void setImageDimensions(File file, boolean viewActualSize) {
         try {
             BufferedImage image = ImageIO.read(file);
             viewDataBean.setFileActualWidth(image.getWidth());
             viewDataBean.setFileActualHeight(image.getHeight());
-            viewDataBean.setFileMaxWidth(image.getWidth() < ViewDataBean.MAX_WIDTH ? image.getWidth() : ViewDataBean.MAX_WIDTH);
-            viewDataBean.setFileMaxHeight(image.getHeight() < ViewDataBean.MAX_HEIGHT ? image.getHeight() : ViewDataBean.MAX_HEIGHT);
+            viewDataBean.setFileMaxWidth(
+                    (viewActualSize || image.getWidth() < ViewDataBean.MAX_WIDTH)
+                            ? image.getWidth()
+                            : ViewDataBean.MAX_WIDTH);
+            viewDataBean.setFileMaxHeight(
+                    (viewActualSize || image.getHeight() < ViewDataBean.MAX_HEIGHT)
+                            ? image.getHeight()
+                            : ViewDataBean.MAX_HEIGHT);
         } catch (IOException ex) {
             logger.error("Error trying to read image file: " + viewDataBean.getSelectedFile().getAbsolutePath(), ex);
         }
@@ -92,26 +110,29 @@ public class ViewDataControlBean extends ExplorerControlBean {
             Date now = new Date();
             long passInSec = (now.getTime() - viewDataBean.getLastLoaded().getTime()) / 1000;
             long fileInSec = viewDataBean.getSelectedMp3Meta().getLengthInMilliseconds() / 1000;
-            return fileInSec - passInSec;
+            long remaining = fileInSec - passInSec;
+            return remaining > 5 ? remaining : 5; // don't make below 5, otherwise, page keeps on polling/refreshing
+        } else if (mediaFileUtil.isImage(viewDataBean.getSelectedFile())) {
+            return SLIDE_SHOW_INTERVAL_IN_SEC;
         } else {
             return 60 * 60 * 4; // poll 4 hour later
         }
     }
-    
+
     public void repeat() {
         if (viewDataBean.isRepeat()) {
             viewDataBean.setPolling(true);
             viewDataBean.setShuffle(false);
         }
     }
-    
+
     public void shuffle() {
         if (viewDataBean.isShuffle()) {
             viewDataBean.setPolling(true);
             viewDataBean.setRepeat(false);
         }
     }
-    
+
     public void polling() {
         if (!viewDataBean.isPolling()) {
             viewDataBean.setRepeat(false);
@@ -126,7 +147,7 @@ public class ViewDataControlBean extends ExplorerControlBean {
     public void playFile(File file) {
         fileId = file.getAbsolutePath();
         if (mediaFileUtil.isImage(file)) {
-            setImageDimensions(file);
+            setAutoImageDimensions(file);
         } else if (mediaFileUtil.isMedia(file)) {
             if (mediaFileUtil.isMp3(viewDataBean.getSelectedFile())) {
                 viewDataBean.setSelectedMp3Meta(getMp3Meta(viewDataBean.getSelectedFile()));
@@ -140,7 +161,7 @@ public class ViewDataControlBean extends ExplorerControlBean {
         fileId = fileList.get(0).getAbsolutePath();
         viewDataBean.setSelectedFile(new File(fileId));
         if (mediaFileUtil.isImage(viewDataBean.getSelectedFile())) {
-            setImageDimensions(viewDataBean.getSelectedFile());
+            setAutoImageDimensions(viewDataBean.getSelectedFile());
         } else if (mediaFileUtil.isMedia(viewDataBean.getSelectedFile())) {
             if (mediaFileUtil.isMp3(viewDataBean.getSelectedFile())) {
                 viewDataBean.setSelectedMp3Meta(getMp3Meta(viewDataBean.getSelectedFile()));
@@ -156,7 +177,7 @@ public class ViewDataControlBean extends ExplorerControlBean {
         fileId = fileList.get(fileList.size() - 1).getAbsolutePath();
         viewDataBean.setSelectedFile(new File(fileId));
         if (mediaFileUtil.isImage(viewDataBean.getSelectedFile())) {
-            setImageDimensions(viewDataBean.getSelectedFile());
+            setAutoImageDimensions(viewDataBean.getSelectedFile());
         } else if (mediaFileUtil.isMedia(viewDataBean.getSelectedFile())) {
             if (mediaFileUtil.isMp3(viewDataBean.getSelectedFile())) {
                 viewDataBean.setSelectedMp3Meta(getMp3Meta(viewDataBean.getSelectedFile()));
@@ -180,7 +201,7 @@ public class ViewDataControlBean extends ExplorerControlBean {
                     : (curIndex + 1)).getAbsolutePath();
             viewDataBean.setSelectedFile(new File(fileId));
             if (mediaFileUtil.isImage(viewDataBean.getSelectedFile())) {
-                setImageDimensions(viewDataBean.getSelectedFile());
+                setAutoImageDimensions(viewDataBean.getSelectedFile());
             } else if (mediaFileUtil.isMedia(viewDataBean.getSelectedFile())) {
                 if (mediaFileUtil.isMp3(viewDataBean.getSelectedFile())) {
                     viewDataBean.setSelectedMp3Meta(getMp3Meta(viewDataBean.getSelectedFile()));
@@ -203,7 +224,7 @@ public class ViewDataControlBean extends ExplorerControlBean {
                     : (curIndex - 1)).getAbsolutePath();
             viewDataBean.setSelectedFile(new File(fileId));
             if (mediaFileUtil.isImage(viewDataBean.getSelectedFile())) {
-                setImageDimensions(viewDataBean.getSelectedFile());
+                setAutoImageDimensions(viewDataBean.getSelectedFile());
             } else if (mediaFileUtil.isMedia(viewDataBean.getSelectedFile())) {
                 if (mediaFileUtil.isMp3(viewDataBean.getSelectedFile())) {
                     viewDataBean.setSelectedMp3Meta(getMp3Meta(viewDataBean.getSelectedFile()));
@@ -226,7 +247,7 @@ public class ViewDataControlBean extends ExplorerControlBean {
         viewDataBean.setSelectedFile(nextFile);
 
         if (mediaFileUtil.isImage(viewDataBean.getSelectedFile())) {
-            setImageDimensions(viewDataBean.getSelectedFile());
+            setAutoImageDimensions(viewDataBean.getSelectedFile());
         } else if (mediaFileUtil.isMedia(viewDataBean.getSelectedFile())) {
             if (mediaFileUtil.isMp3(viewDataBean.getSelectedFile())) {
                 viewDataBean.setSelectedMp3Meta(getMp3Meta(viewDataBean.getSelectedFile()));
