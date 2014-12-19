@@ -12,11 +12,6 @@
 
         <h:form id="viewDataFormId">
             <p:sticky target="stickyPanelId"/>
-            
-            <p:remoteCommand name="toggleActualImageSize" 
-                             process="@this"
-                             actionListener="#{viewDataControlBean.toggleActualImageSize}" 
-                             update="graphicImageId" />
 
             <h:panelGroup id="pollPanelId">
                 <p:poll interval="#{viewDataControlBean.remainingPollInterval}" 
@@ -108,7 +103,7 @@
                 </p:toolbar>
             </h:panelGroup>
 
-            <h:panelGroup rendered="#{viewDataControlBean.fileId != null}">
+            <h:panelGroup>
                 <p:panelGrid columns="3">
                     <h:outputLabel value="#{msg['caption.file.name']}" styleClass="label"/>
                     <h:outputLabel value="#{msg['caption.file.size']}" styleClass="label"/>
@@ -163,13 +158,31 @@
 
                 <p:separator />
 
+                <h:panelGroup rendered="#{mediaFileUtil.isImage(viewDataBean.selectedFile)}">
+                    <h:outputText id="zoomLabelId" value="Zoom #{viewDataBean.relativeToActualSize}%" />
+                    <h:inputHidden id="relativeToActualSizeId" value="#{viewDataBean.relativeToActualSize}" />
+                    <p:slider for="relativeToActualSizeId"
+                              display="zoomLabelId"
+                              displayTemplate="Zoom {value}%"
+                              minValue="-300"
+                              maxValue="300"
+                              step="25"
+                              style="width: 25% !important;">
+                        <p:ajax event="slideEnd" 
+                                process="@this relativeToActualSizeId"
+                                listener="#{viewDataControlBean.zoomImage}"
+                                update="graphicImageId" />
+                    </p:slider>
+                </h:panelGroup>
+                
+                <br/>
+                
                 <p:graphicImage id="graphicImageId"
                                 value="#{contentStreamer.streamedContent}"
-                                onclick="toggleActualImageSize();"
-                                rendered="#{mediaFileUtil.isImagePath(viewDataControlBean.fileId)}"
+                                rendered="#{mediaFileUtil.isImage(viewDataBean.selectedFile)}"
                                 alt="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"
                                 title="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"
-                                width="#{viewDataBean.fileMaxWidth}" height="#{viewDataBean.fileMaxHeight}">
+                                width="#{viewDataBean.fileWidth}" height="#{viewDataBean.fileHeight}">
                     <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
                 </p:graphicImage>
 

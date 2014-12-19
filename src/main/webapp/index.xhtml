@@ -156,7 +156,7 @@
 
                             <p:column rendered="#{p:ifAnyGranted('ROLE_ADMIN,ROLE_CONTRIBUTOR')}">
                                 <p:commandButton id="subTaskButtonId" global="false" icon="fa fa-gear" />
-                                <p:tieredMenu overlay="true" 
+                                <p:menu overlay="true" 
                                               trigger="subTaskButtonId" 
                                               my="left top" 
                                               at="left bottom" 
@@ -181,7 +181,7 @@
                                                 update=":moveFormId"
                                                 title="#{msg['caption.file.move']} #{file.name}?"
                                                 icon="fa fa-exchange"/>
-                                </p:tieredMenu>
+                                </p:menu>
                             </p:column>
                             <p:column> 
                                 <p:commandButton actionListener="#{explorerBean.setSelectedFile(file)}" 

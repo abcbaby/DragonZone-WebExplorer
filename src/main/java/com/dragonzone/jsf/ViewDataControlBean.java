@@ -70,31 +70,43 @@ public class ViewDataControlBean extends ExplorerControlBean {
     }
 
     private void setAutoImageDimensions(File file) {
-        setImageDimensions(file, viewDataBean.isToggleActualImageSize());
+        setImageDimensions(file, viewDataBean.getRelativeToActualSize());
     }
 
-    public void toggleActualImageSize() {
+    public void zoomImage() {
         fileId = viewDataBean.getSelectedFile().getAbsolutePath();
-        viewDataBean.setToggleActualImageSize(!viewDataBean.isToggleActualImageSize());
-        setImageDimensions(viewDataBean.getSelectedFile(), viewDataBean.isToggleActualImageSize());
+        setImageDimensions(viewDataBean.getSelectedFile(), viewDataBean.getRelativeToActualSize());
     }
 
-    private void setImageDimensions(File file, boolean viewActualSize) {
+    private void setImageDimensions(File file, int relativeToActualSize) {
         try {
             BufferedImage image = ImageIO.read(file);
+            int fileWidth;
+            int fileHeight;
+            if (relativeToActualSize == 0) {
+                fileWidth = image.getWidth();
+                fileHeight = image.getHeight();
+            } else {
+                fileWidth = relativeToActualSize > 0
+                        ? (int) (image.getWidth() * (Math.abs((relativeToActualSize + 100) / 100f)))
+                        : getRelativeSize(image.getWidth(), relativeToActualSize);
+                fileHeight = relativeToActualSize > 0
+                        ? (int) (image.getHeight() * (Math.abs((relativeToActualSize + 100) / 100f)))
+                        : getRelativeSize(image.getHeight(), relativeToActualSize);
+            }
             viewDataBean.setFileActualWidth(image.getWidth());
             viewDataBean.setFileActualHeight(image.getHeight());
-            viewDataBean.setFileMaxWidth(
-                    (viewActualSize || image.getWidth() < ViewDataBean.MAX_WIDTH)
-                            ? image.getWidth()
-                            : ViewDataBean.MAX_WIDTH);
-            viewDataBean.setFileMaxHeight(
-                    (viewActualSize || image.getHeight() < ViewDataBean.MAX_HEIGHT)
-                            ? image.getHeight()
-                            : ViewDataBean.MAX_HEIGHT);
+            viewDataBean.setFileWidth(fileWidth);
+            viewDataBean.setFileHeight(fileHeight);
         } catch (IOException ex) {
             logger.error("Error trying to read image file: " + viewDataBean.getSelectedFile().getAbsolutePath(), ex);
         }
+    }
+
+    private int getRelativeSize(int actualSize, int inputSize) {
+        int qtrZoom = actualSize / 12; // up to 300%
+        int relSize = (12 - (Math.abs(inputSize == -300 ? -295 : inputSize) / 25)) * qtrZoom;
+        return relSize;
     }
 
     public void onRowSelect(SelectEvent event) {

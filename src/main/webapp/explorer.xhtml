@@ -87,7 +87,7 @@
                         </p:tieredMenu>                        
                     </f:facet>
                     <p:commandButton id="subTaskButtonId" global="false" icon="fa fa-gear" />
-                    <p:tieredMenu overlay="true" trigger="subTaskButtonId" my="left top" at="left bottom" style="width:100px">
+                    <p:menu overlay="true" trigger="subTaskButtonId" my="left top" at="left bottom" style="width:100px">
                         <p:menuitem value="#{msg['caption.folder.create']}" 
                                     actionListener="#{explorerControlBean.modifySubFolder(dir)}" 
                                     oncomplete="PF('confirmCreateFolderDialog').show();"
@@ -113,7 +113,7 @@
                                     action="#{explorerControlBean.checkZipFolderTotalSize()}"
                                     oncomplete="handleZipFolderRequest(xhr, status, args)"
                                     icon="fa fa-file-archive-o"/>
-                    </p:tieredMenu>
+                    </p:menu>
                 </p:column>
             </p:treeTable>
         </h:panelGroup>
