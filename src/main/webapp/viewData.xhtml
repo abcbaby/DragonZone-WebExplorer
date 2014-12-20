@@ -100,6 +100,38 @@
                                          title="#{msg['caption.play.playlist']}"
                                          icon="fa fa-list" />
                     </f:facet>
+                    <f:facet name="right">
+                        <h:panelGrid id="sliderPanelId"
+                                     columns="4" 
+                                     columnClasses="alignLeft, alignLeft, alignLeft, alignRight"
+                                     style="width: 300px" 
+                                     styleClass="panelGrid-noBorder"
+                                     rendered="#{mediaFileUtil.isImage(viewDataBean.selectedFile)}">
+                            <h:outputLabel id="zoomLabelId" 
+                                           styleClass="label nowrap"
+                                           value="Zoom #{viewDataBean.relativeToActualSize}%" />
+                            <h:inputHidden id="relativeToActualSizeId" 
+                                           value="#{viewDataBean.relativeToActualSize}" />
+                            <p:slider for="relativeToActualSizeId"
+                                      display="zoomLabelId"
+                                      displayTemplate="Zoom {value}%"
+                                      minValue="#{msg['image.zoom.min']}"
+                                      maxValue="#{msg['image.zoom.max']}"
+                                      step="#{msg['image.zoom.step']}"
+                                      style="width: 300px;">
+                                <p:ajax event="slideEnd" 
+                                        process="@this relativeToActualSizeId"
+                                        listener="#{viewDataControlBean.zoomImage}"
+                                        update="graphicImageId" />
+                            </p:slider>
+                            <p:commandButton actionListener="#{viewDataBean.setRelativeToActualSize(0)}"
+                                             action="#{viewDataControlBean.zoomImage}"
+                                             title="#{msg['caption.image.zoom.reset']}"
+                                             process="@this"
+                                             update="sliderPanelId graphicImageId"
+                                             icon="fa fa-refresh"/>
+                        </h:panelGrid>
+                    </f:facet>
                 </p:toolbar>
             </h:panelGroup>
 
@@ -158,31 +190,12 @@
 
                 <p:separator />
 
-                <h:panelGroup rendered="#{mediaFileUtil.isImage(viewDataBean.selectedFile)}">
-                    <h:outputText id="zoomLabelId" value="Zoom #{viewDataBean.relativeToActualSize}%" />
-                    <h:inputHidden id="relativeToActualSizeId" value="#{viewDataBean.relativeToActualSize}" />
-                    <p:slider for="relativeToActualSizeId"
-                              display="zoomLabelId"
-                              displayTemplate="Zoom {value}%"
-                              minValue="-300"
-                              maxValue="300"
-                              step="25"
-                              style="width: 25% !important;">
-                        <p:ajax event="slideEnd" 
-                                process="@this relativeToActualSizeId"
-                                listener="#{viewDataControlBean.zoomImage}"
-                                update="graphicImageId" />
-                    </p:slider>
-                </h:panelGroup>
-                
-                <br/>
-                
                 <p:graphicImage id="graphicImageId"
                                 value="#{contentStreamer.streamedContent}"
                                 rendered="#{mediaFileUtil.isImage(viewDataBean.selectedFile)}"
-                                alt="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"
-                                title="Actual width x height: (#{viewDataBean.fileActualWidth} x #{viewDataBean.fileActualHeight})"
-                                width="#{viewDataBean.fileWidth}" height="#{viewDataBean.fileHeight}">
+                                title="#{viewDataBean.fileWidth} x #{viewDataBean.fileHeight}"
+                                width="#{viewDataBean.fileWidth}" 
+                                height="#{viewDataBean.fileHeight}">
                     <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
                 </p:graphicImage>
 

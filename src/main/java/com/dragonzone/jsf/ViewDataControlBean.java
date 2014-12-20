@@ -1,6 +1,7 @@
 package com.dragonzone.jsf;
 
 import com.dragonzone.jsf.util.MediaFileUtil;
+import com.dragonzone.jsf.util.MessageUtil;
 import com.dragonzone.service.FileDirectoryService;
 import com.dragonzone.util.FileUtil;
 import java.awt.image.BufferedImage;
@@ -104,8 +105,11 @@ public class ViewDataControlBean extends ExplorerControlBean {
     }
 
     private int getRelativeSize(int actualSize, int inputSize) {
-        int qtrZoom = actualSize / 12; // up to 300%
-        int relSize = (12 - (Math.abs(inputSize == -300 ? -295 : inputSize) / 25)) * qtrZoom;
+        int step = Integer.parseInt(MessageUtil.getResourceBundleValue("image.zoom.step", null));
+        int stepTotal = Integer.parseInt(MessageUtil.getResourceBundleValue("image.zoom.step.total", null));
+        int zoomMin = Integer.parseInt(MessageUtil.getResourceBundleValue("image.zoom.min", null));
+        int perZoom = actualSize / stepTotal;
+        int relSize = (stepTotal - (Math.abs(inputSize == zoomMin ? (zoomMin + 3) : inputSize) / step)) * perZoom;
         return relSize;
     }
 
