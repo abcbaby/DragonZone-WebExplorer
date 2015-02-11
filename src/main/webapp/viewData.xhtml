@@ -23,7 +23,12 @@
             <h:panelGroup id="stickyPanelId">
                 <p:toolbar>
                     <f:facet name="left">
-                        Path: #{viewDataBean.selectedFile.absoluteFile}
+                        <h:outputText value="Path: "/>
+                        <p:commandLink action="#{viewDataControlBean.downloadFile()}"
+                                       value="#{viewDataBean.selectedFile.name}"
+                                       title="Download #{viewDataBean.selectedFile.name}?"
+                                       disabled="#{viewDataBean.selectedFile.directory}"
+                                       ajax="false"/>
                     </f:facet>
                     <f:facet name="right">
                         <h:outputText value="Player: #{mediaFileUtil.getMediaPlayer(viewDataBean.selectedFile).toUpperCase()}"

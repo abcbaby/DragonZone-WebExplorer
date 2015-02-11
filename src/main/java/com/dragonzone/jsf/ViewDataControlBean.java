@@ -6,7 +6,10 @@ import com.dragonzone.service.FileDirectoryService;
 import com.dragonzone.util.FileUtil;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +17,10 @@ import java.util.Random;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
+import org.apache.commons.io.IOUtils;
 import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -288,6 +294,26 @@ public class ViewDataControlBean extends ExplorerControlBean {
         int randomNum = rand.nextInt((max - min) + 1) + min;
 
         return randomNum;
+    }
+
+    @Override
+    public void downloadFile() throws IOException {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+
+        String contentType = Files.probeContentType(viewDataBean.getSelectedFile().toPath());
+        ec.responseReset(); // Some JSF component library or some Filter might have set some headers in the buffer beforehand. We want to get rid of them, else it may collide.
+        ec.setResponseContentType(contentType); // Check http://www.iana.org/assignments/media-types for all types. Use if necessary ExternalContext#getMimeType() for auto-detection based on filename.
+        ec.setResponseContentLength(Long.valueOf(viewDataBean.getSelectedFile().length()).intValue()); // Set it with the file size. This header is optional. It will work if it's omitted, but the download progress will be unknown.
+        ec.setResponseHeader("Content-Disposition",
+                "attachment; filename=\"" + viewDataBean.getSelectedFile().getName() + "\""); // The Save As popup magic is done here. You can give it any file name you want, this only won't work in MSIE, it will use current request URL as file name instead.
+
+        OutputStream output = ec.getResponseOutputStream();
+        try (FileInputStream fis = new FileInputStream(viewDataBean.getSelectedFile())) {
+            IOUtils.copy(fis, output);
+        }
+
+        fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail since it's already written with a file and closed.
     }
 
     /**
