@@ -1,6 +1,7 @@
 package com.dragonzone.jsf.util;
 
 import com.dragonzone.security.AESEncryption;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,7 +43,8 @@ public class ContentStreamer {
             MediaFileUtil mediaFileUtil = new MediaFileUtil();
             if (mediaFileUtil.isImage(file) || mediaFileUtil.isMedia(file)) {
                 String mimeType = Files.probeContentType(file.toPath());
-                return new DefaultStreamedContent(new FileInputStream(file), mimeType);
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+                return new DefaultStreamedContent(bis, mimeType);
             } else {
                 return getDefaultStreamedContent();
             }
@@ -64,7 +66,8 @@ public class ContentStreamer {
                 if (file.length() < DEFAULT_FILE_SIZE_LIMIT) {
                     try {
                         String mimeType = Files.probeContentType(file.toPath());
-                        return new DefaultStreamedContent(new FileInputStream(file), mimeType);
+                        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+                        return new DefaultStreamedContent(bis, mimeType);
                     } catch (Exception e) {
                         logger.error("Error trying to load file: " + file.getAbsolutePath(), e);
                         return new DefaultStreamedContent();
