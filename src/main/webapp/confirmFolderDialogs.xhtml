@@ -58,7 +58,7 @@
                 <p:commandButton value="OK" 
                                  actionListener="#{explorerControlBean.renameFolder()}"
                                  onclick="PF('confirmRenameFolderDialog').hide();" 
-                                 update=":explorerForm"/>
+                                 update=":explorerForm :mainForm:searchToolBarId"/>
                 <p:spacer width="5px"/>
                 <p:commandButton value="Cancel" 
                                  oncomplete="PF('confirmRenameFolderDialog').hide();" />   
@@ -86,7 +86,7 @@
                 <p:commandButton value="OK" 
                                  actionListener="#{explorerControlBean.deleteFolder()}"
                                  onclick="PF('confirmDeleteFolderDialog').hide();" 
-                                 update=":explorerForm"/>
+                                 update=":explorerForm :mainForm"/>
                 <p:spacer width="5px"/>
                 <p:commandButton value="Cancel" 
                                  oncomplete="PF('confirmDeleteFolderDialog').hide();" />   
