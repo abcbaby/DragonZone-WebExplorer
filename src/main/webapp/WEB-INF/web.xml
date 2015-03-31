@@ -65,7 +65,7 @@
         </init-param>
     </filter>
 
-    <!-- Used for JSF 2.1 OR BELOW   
+     <!--Used for JSF 2.1 OR BELOW - BEGIN -->   
     <filter>
         <filter-name>PrimeFaces FileUpload Filter</filter-name>
         <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
@@ -75,7 +75,8 @@
         <filter-name>PrimeFaces FileUpload Filter</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
     </filter-mapping>
-    -->
+     <!--Used for JSF 2.1 OR BELOW - ENDS -->   
+    
     
     <filter-mapping>
         <filter-name>encoding-filter</filter-name>
@@ -88,24 +89,10 @@
     </filter-mapping>
 
     <servlet>
-        <servlet-name>simple-form</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value></param-value>
-        </init-param>
-    </servlet>
-    
-    <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>simple-form</servlet-name>
-        <url-pattern>*.html</url-pattern>
-    </servlet-mapping>
     
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
