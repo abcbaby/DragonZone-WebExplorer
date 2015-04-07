@@ -4,11 +4,6 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
     <application>
-        <factory>
-            <exception-handler-factory>
-                org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory
-            </exception-handler-factory>
-        </factory>        
         <el-resolver>
             org.springframework.web.jsf.el.SpringBeanFacesELResolver
         </el-resolver>
@@ -24,5 +19,10 @@
             <var>msg</var>
         </resource-bundle>
     </application>
+	<factory>
+	    <exception-handler-factory>
+	        org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory
+	    </exception-handler-factory>
+	</factory>        
 
 </faces-config>
