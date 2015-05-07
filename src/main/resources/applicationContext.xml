@@ -20,4 +20,10 @@
             </list>
         </property>
     </bean>
+
+	<bean id="jasyptPBEStringEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+		<property name="algorithm" value="PBEWithMD5AndTripleDES" />
+		<property name="password" value="jasypt" />
+	</bean>
+
 </beans>
