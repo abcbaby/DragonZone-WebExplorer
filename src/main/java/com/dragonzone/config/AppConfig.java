@@ -1,5 +1,6 @@
 package com.dragonzone.config;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.jasypt.encryption.pbe.config.PBEConfig;
 import org.jasypt.properties.PropertyValueEncryptionUtils;
 import org.jasypt.spring31.properties.EncryptablePropertiesPropertySource;
 import org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -36,6 +38,7 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan({ "com.dragonzone.spring.*" })
 @Import({ SecurityConfig.class })
 public class AppConfig {
+    final static org.slf4j.Logger logger = LoggerFactory.getLogger(AppConfig.class);
 
 	@Autowired
 	private ApplicationContext ctx;
@@ -79,11 +82,30 @@ public class AppConfig {
 		return encryptor;
 	}
 	
+	private void resourceExists(List<Resource> resourceList) {
+		if (resourceList != null) {
+			try {
+				for (int i = (resourceList.size() - 1); i >= 0; i--) {
+					File resourceFile = resourceList.get(i).getFile();
+					if (!resourceFile.exists()) {
+						logger.warn("Resource file does not exists, omitting: " + resourceFile);
+						resourceList.remove(i);
+					}
+				}
+			} catch (Exception e) {
+				logger.error("Error verifying resources.");
+			}
+		}
+	}
+	
 	private List<Resource> getResourceList() {
 		List<Resource> resourceList = new ArrayList<>();
-		resourceList.add(new ClassPathResource( "resources.properties" ));
-		resourceList.add(new ClassPathResource( "webexplorer.properties" ));
-		resourceList.add(new FileSystemResource( "/opt/config/webexplorer.properties" ));
+		resourceList.add(new ClassPathResource("resources.properties"));
+		resourceList.add(new ClassPathResource("webexplorer.properties"));
+		resourceList.add(new FileSystemResource("/opt/config/webexplorer.properties"));
+		
+		resourceExists(resourceList);
+		
 		return resourceList;
 	}
 
