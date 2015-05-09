@@ -27,7 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.authorizeRequests()
+		http.csrf().disable()
+			.authorizeRequests()
 			.antMatchers("/terminal/*.jsf").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_CONTRIBUTOR')")
 			.antMatchers("/**").authenticated()
 			.and().httpBasic();
