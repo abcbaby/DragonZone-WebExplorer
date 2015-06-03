@@ -1,23 +1,21 @@
 package com.dragonzone.jsf;
 
+import java.io.File;
+import java.net.URLEncoder;
+
+import javax.faces.bean.ManagedProperty;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dragonzone.jsf.util.MessageUtil;
 import com.dragonzone.jsf.util.SecurityBean;
 import com.dragonzone.mp3.Mp3Meta;
 import com.dragonzone.mp3.Mp3Util;
 import com.dragonzone.security.AESEncryption;
 import com.dragonzone.spring.AppProperties;
-import java.io.File;
-import java.net.URLEncoder;
-
-import javax.faces.bean.ManagedProperty;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import net.sf.uadetector.ReadableUserAgent;
-import net.sf.uadetector.UserAgentStringParser;
-import net.sf.uadetector.service.UADetectorServiceFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class BaseBean {
     final static Logger logger = LoggerFactory.getLogger(BaseBean.class);
@@ -127,30 +125,7 @@ public abstract class BaseBean {
     public Mp3Meta getMp3Meta(File file) {
         return Mp3Util.getMp3Meta(file.getAbsolutePath());
     }
-
-    public ReadableUserAgent getReadableUserAgent() {
-        UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
-        return parser.parse(((HttpServletRequest) getFacesContext().getExternalContext().getRequest()).getHeader("User-Agent"));
-    }
-
-    /**
-     * http://forum.primefaces.org/viewtopic.php?f=3&t=33498
-     *
-     * @return true if browser support sticky
-     */
-    public boolean isSupportSticky() {
-        boolean useSticky = false;
-        switch (getReadableUserAgent().getName().toLowerCase()) {
-            case "firefox":
-            case "chrome":
-                useSticky = true;
-                break;
-            default:
-                break;
-        }
-        return useSticky;
-    }
-
+	
     /**
      * @return the securityBean
      */
@@ -164,7 +139,7 @@ public abstract class BaseBean {
     public void setSecurityBean(SecurityBean securityBean) {
         this.securityBean = securityBean;
     }
-
+	
     /**
      * @return the appProperties
      */
