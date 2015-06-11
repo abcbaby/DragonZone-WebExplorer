@@ -1,30 +1,36 @@
 package com.dragonzone.jsf;
 
-import com.dragonzone.jsf.util.MediaFileUtil;
-import com.dragonzone.jsf.util.MessageUtil;
-import com.dragonzone.service.FileDirectoryService;
-import com.dragonzone.util.FileUtil;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
+
 import org.apache.commons.io.IOUtils;
 import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import resnbl.android.swfview.SWFInfo;
+
+import com.dragonzone.jsf.util.MediaFileUtil;
+import com.dragonzone.jsf.util.MessageUtil;
+import com.dragonzone.service.FileDirectoryService;
+import com.dragonzone.util.FileUtil;
 
 @ManagedBean
 @RequestScoped
@@ -58,6 +64,15 @@ public class ViewDataControlBean extends ExplorerControlBean {
                 }
             }
         }
+    }
+    
+    public String mimeType(File file) throws Exception {
+        return Files.probeContentType(file.toPath());
+    }
+    
+    public String base64Encode(File file) throws Exception {
+    	BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+    	return Base64.getEncoder().encodeToString(IOUtils.toByteArray(bis));
     }
 
     public SWFInfo getSwfInfo(File file) {

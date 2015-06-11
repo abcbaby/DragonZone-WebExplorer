@@ -204,48 +204,29 @@
                     <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
                 </p:graphicImage>
 
-                <!--
-                                        <audio preload="auto" controls="true" autoplay="false" loop="false">
-                                            <source src="http://localhost:8888/test.mp3" type="audio/mp3"/>
-                                            Your browser does not support the video tag.
-                                        </audio> 
-                -->
+				<p:panel rendered="#{mediaFileUtil.isMp3(viewDataBean.selectedFile)}">
+	                <audio preload="auto" controls="true" autoplay="false">
+	                    <source src="data:#{viewDataControlBean.mimeType(viewDataBean.selectedFile)};base64,#{viewDataControlBean.base64Encode(viewDataBean.selectedFile)}"
+	                    	type="#{viewDataControlBean.mimeType(viewDataBean.selectedFile)}"/>
+	                    Your browser does not support the audio tag.
+	                </audio> 
+				</p:panel>
 
-                <p:media value="#{contentStreamer.streamedContent}" player="windows" width="100%" height="600px"
-                         rendered="#{mediaFileUtil.isMediaPlayerPath('windows', viewDataControlBean.fileId)}">
-                    <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
-                    <f:param name="AUTOPLAY" value="false" />
-                    <f:param name="autostart" value="false" />
-                </p:media>
-
-                <p:media value="#{contentStreamer.streamedContent}" player="quicktime" 
-                         width="100%" 
-                         height="#{mediaFileUtil.isMp3(viewDataBean.selectedFile) ? '100px' : '600px'}"
-                         rendered="#{mediaFileUtil.isMediaPlayerPath('quicktime', viewDataControlBean.fileId)}">
-                    <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
-                    <f:param name="AUTOPLAY" value="false" />
-                    <f:param name="autostart" value="false" />
-                    <f:param name="type" value="video/quicktime" />
-                </p:media>
+				<p:panel rendered="#{mediaFileUtil.isMediaPlayerPath('pdf', viewDataControlBean.fileId) 
+					or mediaFileUtil.isMediaPlayerPath('windows', viewDataControlBean.fileId)
+					or mediaFileUtil.isMediaPlayerPath('quicktime', viewDataControlBean.fileId)
+					or mediaFileUtil.isMediaPlayerPath('real', viewDataControlBean.fileId)}">
+	                <video preload="auto" controls="true" autoplay="false" width="100%" height="600px">
+	                    <source src="data:#{viewDataControlBean.mimeType(viewDataBean.selectedFile)};base64,#{viewDataControlBean.base64Encode(viewDataBean.selectedFile)}"
+	                    	type="#{viewDataControlBean.mimeType(viewDataBean.selectedFile)}"/>
+	                    Your browser does not support the video tag.
+	                </video> 
+				</p:panel>
 
                 <p:media value="#{contentStreamer.streamedContent}" player="flash" 
                          width="#{mediaFileUtil.isSwf(viewDataBean.selectedFile) ? viewDataControlBean.getSwfInfo(viewDataBean.selectedFile).width : '100px'}" 
                          height="#{mediaFileUtil.isSwf(viewDataBean.selectedFile) ? viewDataControlBean.getSwfInfo(viewDataBean.selectedFile).height : '600px'}"
                          rendered="#{mediaFileUtil.isMediaPlayerPath('flash', viewDataControlBean.fileId)}">
-                    <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
-                    <f:param name="AUTOPLAY" value="false" />
-                    <f:param name="autostart" value="false" />
-                </p:media>
-
-                <p:media value="#{contentStreamer.streamedContent}" player="real" width="100%" height="600px"
-                         rendered="#{mediaFileUtil.isMediaPlayerPath('real', viewDataControlBean.fileId)}">
-                    <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
-                    <f:param name="AUTOPLAY" value="false" />
-                    <f:param name="autostart" value="false" />
-                </p:media>
-
-                <p:media value="#{contentStreamer.streamedContent}" player="pdf" width="100%" height="600px"
-                         rendered="#{mediaFileUtil.isMediaPlayerPath('pdf', viewDataControlBean.fileId)}">
                     <f:param name="fileId" value="#{viewDataControlBean.encrypt(viewDataControlBean.fileId, 'FILEID_KEY')}" />
                     <f:param name="AUTOPLAY" value="false" />
                     <f:param name="autostart" value="false" />
