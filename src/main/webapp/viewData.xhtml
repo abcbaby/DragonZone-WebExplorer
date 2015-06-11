@@ -212,10 +212,11 @@
 	                </audio> 
 				</p:panel>
 
-				<p:panel rendered="#{mediaFileUtil.isMediaPlayerPath('pdf', viewDataControlBean.fileId) 
+				<p:panel rendered="#{!mediaFileUtil.isMp3(viewDataBean.selectedFile)
+					and (mediaFileUtil.isMediaPlayerPath('pdf', viewDataControlBean.fileId) 
 					or mediaFileUtil.isMediaPlayerPath('windows', viewDataControlBean.fileId)
 					or mediaFileUtil.isMediaPlayerPath('quicktime', viewDataControlBean.fileId)
-					or mediaFileUtil.isMediaPlayerPath('real', viewDataControlBean.fileId)}">
+					or mediaFileUtil.isMediaPlayerPath('real', viewDataControlBean.fileId))}">
 	                <video preload="auto" controls="true" autoplay="false" width="100%" height="600px">
 	                    <source src="data:#{viewDataControlBean.mimeType(viewDataBean.selectedFile)};base64,#{viewDataControlBean.base64Encode(viewDataBean.selectedFile)}"
 	                    	type="#{viewDataControlBean.mimeType(viewDataBean.selectedFile)}"/>
